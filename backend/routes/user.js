@@ -95,21 +95,33 @@ router.get('/user/signup', async (req, res, next) => {
     try{
         const sqlUser = 'SELECT * FROM users WHERE email = ?'
         const [rows, cols] = await conn.query(sqlUser, [email])
-
         // encapPassword = await bcrypt.hash(password, 10)
         matched = await verifyPassword(password, rows[0].password);
         console.log("Ckeck = " + matched);
 
+        if (rows.length === 1 && matched) {
+            // console.log("Have Email && Password match")
+            return res.json({ State: true,
+                              reason: "Have Email && Password match",
+                              userData: rows[0]
+                            });
+        }
+        else if (rows.length === 1){
+            // console.log("Password incorrect")
+            return res.json({ State: false,
+                              reason: "Password incorrect",
+                            });
+        }
+
         await conn.commit()
-        return res.json(rows[0])
+        // return res.json(rows)
     }catch(err){
         await conn.rollback();
-        return res.status(500).json(err.toString)
+        console.log(err)
+        return res.status(500).json({error: "Email not found!"})
     }finally{
-        console.log('finally')
         conn.release()
     }
-
 
 })
 
