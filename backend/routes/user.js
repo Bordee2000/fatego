@@ -27,8 +27,20 @@ const usernameValidator = async (value, helpers) => {
     return value
 }
 
+async function emailValidator(value) {
+    const [rows, _] = await pool.query(
+        "SELECT username FROM users WHERE email = ?",
+        [value]
+    )
+    if (rows.length > 0) {
+        const message = 'This email is already taken'
+        throw new Joi.ValidationError(message, { message })
+    }
+    return value
+}
+
 const registerSchema = Joi.object({
-    email: Joi.string().required().email(),
+    email: Joi.string().required().email().external(emailValidator),
     password: Joi.string().required().custom(passwordValidator),
     username: Joi.string().required().min(5).external(usernameValidator),
 })
@@ -45,7 +57,7 @@ router.post('/user/signup', async (req, res, next) => {
     await conn.beginTransaction()
 
     const username = req.body.username
-    const password = await bcrypt.hash(req.body.password, 5)
+    const password = await bcrypt.hash(req.body.password, 10)
     const email = req.body.email
 
     try {
@@ -64,5 +76,42 @@ router.post('/user/signup', async (req, res, next) => {
         conn.release()
     }
 })
+
+
+async function verifyPassword(password, hash) {
+    // Verifies the input password if it matches the hash
+    // using the bcrypt compare method,
+    // and return a boolean result accordingly.
+    return await bcrypt.compare(password, hash);
+  }
+
+router.get('/user/signup', async (req, res, next) => {
+    email = req.body.email
+    password = req.body.password
+
+    const conn = await pool.getConnection()
+    await conn.beginTransaction();
+
+    try{
+        const sqlUser = 'SELECT * FROM users WHERE email = ?'
+        const [rows, cols] = await conn.query(sqlUser, [email])
+
+        // encapPassword = await bcrypt.hash(password, 10)
+        matched = await verifyPassword(password, rows[0].password);
+        console.log("Ckeck = " + matched);
+
+        await conn.commit()
+        return res.json(rows[0])
+    }catch(err){
+        await conn.rollback();
+        return res.status(500).json(err.toString)
+    }finally{
+        console.log('finally')
+        conn.release()
+    }
+
+
+})
+
 
 exports.router = router
