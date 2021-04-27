@@ -27,19 +27,15 @@ const usernameValidator = async (value, helpers) => {
     return value
 }
 
-const signupSchema = Joi.object({
+const registerSchema = Joi.object({
     email: Joi.string().required().email(),
-    mobile: Joi.string().required().pattern(/0[0-9]{9}/),
-    first_name: Joi.string().required().max(150),
-    last_name: Joi.string().required().max(150),
     password: Joi.string().required().custom(passwordValidator),
-    confirm_password: Joi.string().required().valid(Joi.ref('password')),
     username: Joi.string().required().min(5).external(usernameValidator),
 })
 
 router.post('/user/signup', async (req, res, next) => {
     try {
-        await signupSchema.validateAsync(req.body, { abortEarly: false })
+        await registerSchema.validateAsync(req.body, { abortEarly: false })
 
     } catch (err) {
         return res.status(400).json(err)
@@ -50,20 +46,17 @@ router.post('/user/signup', async (req, res, next) => {
 
     const username = req.body.username
     const password = await bcrypt.hash(req.body.password, 5)
-    const first_name = req.body.first_name
-    const last_name = req.body.last_name
     const email = req.body.email
-    const mobile = req.body.mobile
 
     try {
         await conn.query(
-            'INSERT INTO users(username, password, first_name, last_name, email, mobile) ' +
-            'VALUES (?, ?, ?, ?, ?, ?)',
+            'INSERT INTO users(username, password, email) ' +
+            'VALUES (?, ?, ?)',
             // เติมเอง
-            [username, password, first_name, last_name, email, mobile]
+            [username, password, email,]
         )
         conn.commit()
-        res.status(201).send()
+        res.status(201).send("Register Success")
     } catch (err) {
         conn.rollback()
         res.status(400).json(err.toString());
