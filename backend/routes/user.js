@@ -101,14 +101,14 @@ router.get('/user/signup', async (req, res, next) => {
 
         if (rows.length === 1 && matched) {
             // console.log("Have Email && Password match")
-            return res.json({ State: true,
+            return res.json({ state: true,
                               reason: "Have Email && Password match",
                               userData: rows[0]
                             });
         }
         else if (rows.length === 1){
             // console.log("Password incorrect")
-            return res.json({ State: false,
+            return res.json({ state: false,
                               reason: "Password incorrect",
                             });
         }
@@ -118,7 +118,9 @@ router.get('/user/signup', async (req, res, next) => {
     }catch(err){
         await conn.rollback();
         console.log(err)
-        return res.status(500).json({error: "Email not found!"})
+        return res.status(500).json({ state: false,
+                                      error: "Email not found!"
+                                    })
     }finally{
         conn.release()
     }
