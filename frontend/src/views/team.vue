@@ -6,22 +6,36 @@
     <!-- step image -->
     <div class="columns is-centered">
       <div class="is-half has-text-centered">
-        <button class="button is-black p-5 m-5" disabled>Buster</button>
-        <button class="button is-black is-inverted p-5 m-5">Arks</button>
-        <button class="button is-black is-inverted p-5 m-5">Quick</button>
+        <button
+          class="button p-5 m-5"
+          @click="team_type='Buster'"
+          :class="team_type=='Buster'?'is-danger':'is-black is-inverted'"
+        >Buster</button>
+        <button
+          class="button p-5 m-5"
+          @click="team_type='Arts'"
+          :class="team_type=='Arts'?'is-info':'is-black is-inverted'"
+        >Arts</button>
+        <button
+          class="button p-5 m-5"
+          @click="team_type='Quick'"
+          :class="team_type=='Quick'?'is-success':'is-black is-inverted'"
+        >Quick</button>
       </div>
     </div>
 
     <div class="columns is-centered">
       <div class="card mr-1" v-for="item in length" :key="item">
-        <div class="card-image">
-          <figure class="image is-4by3">
-            <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image" />
-          </figure>
-        </div>
-        <div class="card-header-title">
-          <p>Servant Name</p>
-        </div>
+        <router-link to="/servantDetail/1">
+          <div class="card-image">
+            <figure class="image is-4by3">
+              <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image" />
+            </figure>
+          </div>
+          <div class="card-header-title">
+            <p>Servant Name</p>
+          </div>
+        </router-link>
       </div>
     </div>
 
@@ -44,14 +58,16 @@
                 <td>
                   <div class="is-flex">
                     <div class="card" v-for="list in item.a" :key="list">
-                      <div class="card-image">
-                        <figure class="image">
-                          <img
-                            src="https://bulma.io/images/placeholders/1280x960.png"
-                            alt="Placeholder image"
-                          />
-                        </figure>
-                      </div>
+                      <router-link to="/servantDetail/1">
+                        <div class="card-image">
+                          <figure class="image">
+                            <img
+                              src="https://bulma.io/images/placeholders/1280x960.png"
+                              alt="Placeholder image"
+                            />
+                          </figure>
+                        </div>
+                      </router-link>
                       <div class="card-header-title is-justify-content-center">
                         <p style="font-size: 9px; text-align: center;">Servant Name</p>
                       </div>
@@ -107,13 +123,14 @@
 export default {
   data() {
     return {
+      team_type: "Buster",
       items: [
         { a: [1, 2, 3], b: [3, 4, 5], c: [5, 6, 7] },
         { a: [1, 2], b: [3, 4], c: [5, 6] },
         { a: [1], b: [3], c: [5] },
         { a: [1], b: [3], c: [5] }
       ],
-      length: [1,2,3,4,5,6,7],
+      length: [1, 2, 3, 4, 5, 6, 7]
     };
   }
 };
@@ -126,7 +143,7 @@ export default {
 .table tbody td {
   border: none !important;
 }
-.is-flex .card{
+.is-flex .card {
   width: 7vw !important;
 }
 </style>

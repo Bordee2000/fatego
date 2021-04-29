@@ -176,6 +176,7 @@
 export default {
   data() {
     return {
+      team_type: "",
       items: []
     };
   }
