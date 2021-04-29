@@ -24,6 +24,11 @@ const routes = [
     name: 'team_recommend',
     component: () => import('../views/team.vue')
   },
+  {
+    path: '/calculator',
+    name: 'calculator',
+    component: () => import('../views/calculator.vue')
+  },
 ]
 
 const router = new VueRouter({

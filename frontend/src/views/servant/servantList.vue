@@ -1,10 +1,10 @@
 <template>
-  <div class="container is-fluid mt-6">
+  <div class="container is-fluid mt-5">
     <div class="columns is-centered">
       <h1 class="is-size-1 title px-6">Servant List</h1>
     </div>
 
-    <div class="is-max-desktop mx-6 px-6 py-2" style="border: 1px solid black">
+    <div class="is-max-desktop mx-6 px-6 py-3 pb-6" style="border: 1px solid black">
       <nav class="level">
         <!-- Left side -->
         <div class="level-left">
@@ -40,8 +40,9 @@
           </div>
         </div>
       </nav>
+
       <section class="columns is-multiline">
-        <div class="card column is-2 mx-4 my-2">
+        <div class="card column is-2 mx-4 my-2" v-for="item in items" :key="item">
           <div class="card-image">
             <!-- send id --><router-link to="/servantDetail/1">
               <figure class="image is-1by1">
@@ -59,7 +60,7 @@
 export default {
   data() {
     return {
-      items: []
+      items: [1,2,3,4,5,6,7,8,9]
     };
   }
 };

@@ -1,7 +1,7 @@
 <template>
   <div class="container is-fluid mt-6">
     <div class="columns">
-      <h1 class="is-size-1 has-text-weight-bold px-6">FateGOBase</h1>
+      <router-link to="/" class="is-size-1 has-text-weight-bold px-6">FateGOBase</router-link>
     </div>
     <div class="columns px-6 mx-6">
       <!-- login -->
@@ -168,3 +168,9 @@ export default {
   }
 };
 </script>
+
+<style>
+  a :hover{
+    color: none;
+  }
+</style>

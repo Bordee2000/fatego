@@ -40,7 +40,7 @@
 
             <tbody>
               <tr class="mb-4" v-for="(item, index) in items" :key="item">
-                <th class="is-vcentered has-text-centered">Team {{index}}</th>
+                <th class="is-vcentered has-text-centered">Team {{index+1}}</th>
                 <td>
                   <div class="is-flex">
                     <div class="card" v-for="list in item.a" :key="list">
@@ -107,11 +107,12 @@
 export default {
   data() {
     return {
-      items: {
-        1: { a: [1, 2, 3], b: [3, 4, 5], c: [5, 6, 7] },
-        2: { a: [1, 2], b: [3, 4], c: [5, 6] },
-        3: { a: [1], b: [3], c: [5] }
-      },
+      items: [
+        { a: [1, 2, 3], b: [3, 4, 5], c: [5, 6, 7] },
+        { a: [1, 2], b: [3, 4], c: [5, 6] },
+        { a: [1], b: [3], c: [5] },
+        { a: [1], b: [3], c: [5] }
+      ],
       length: [1,2,3,4,5,6,7],
     };
   }
