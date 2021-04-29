@@ -45,7 +45,7 @@
           >
             <p>
               ATK:
-              <span style="padding-right: 35%;"></span> HP:
+              <span style="padding-right: 42%;"></span> HP:
             </p>
             <p>
               4★ATK:
@@ -126,44 +126,44 @@
 
         <div class="columns is-centered is-multiline has-text-centered mt-5">
           <Button
-            class="card button m-3 py-2 is-size-4 has-text-weight-bold"
-            style="width: 35%;box-shadow: 0px 0px 10px;"
+            class="card button m-3 py-2 is-size-6 has-text-weight-bold"
+            style="width: 42%;box-shadow: 0px 0px 10px;"
           >Active Skill</button>
           <Button
-            class="card button m-3 py-2 is-size-4 has-text-weight-bold"
-            style="width: 35%;box-shadow: 0px 0px 10px;"
+            class="card button m-3 py-2 is-size-6 has-text-weight-bold"
+            style="width: 42%;box-shadow: 0px 0px 10px;"
           >Passive Skills</button>
           <Button
-            class="card button m-3 py-2 is-size-4 has-text-weight-bold"
-            style="width: 35%;box-shadow: 0px 0px 10px;"
+            class="card button m-3 py-2 is-size-6 has-text-weight-bold"
+            style="width: 42%;box-shadow: 0px 0px 10px;"
           >Noble Phantasm</button>
           <Button
-            class="card button m-3 py-2 is-size-4 has-text-weight-bold"
-            style="width: 35%;box-shadow: 0px 0px 10px;"
+            class="card button m-3 py-2 is-size-6 has-text-weight-bold"
+            style="width: 42%;box-shadow: 0px 0px 10px;"
           >Ascension</button>
           <Button
-            class="card button m-3 py-2 is-size-4 has-text-weight-bold"
-            style="width: 35%;box-shadow: 0px 0px 10px;"
+            class="card button m-3 py-2 is-size-6 has-text-weight-bold"
+            style="width: 42%;box-shadow: 0px 0px 10px;"
           >Skill Upgrade</button>
           <Button
-            class="card button m-3 py-2 is-size-4 has-text-weight-bold"
-            style="width: 35%;box-shadow: 0px 0px 10px;"
+            class="card button m-3 py-2 is-size-6 has-text-weight-bold"
+            style="width: 42%;box-shadow: 0px 0px 10px;"
           >State</button>
           <Button
-            class="card button m-3 py-2 is-size-4 has-text-weight-bold"
-            style="width: 35%;box-shadow: 0px 0px 10px;"
+            class="card button m-3 py-2 is-size-6 has-text-weight-bold"
+            style="width: 42%;box-shadow: 0px 0px 10px;"
           >Bond Level</button>
           <Button
-            class="card button m-3 py-2 is-size-4 has-text-weight-bold"
-            style="width: 35%;box-shadow: 0px 0px 10px;"
+            class="card button m-3 py-2 is-size-6 has-text-weight-bold"
+            style="width: 42%;box-shadow: 0px 0px 10px;"
           >Biography</button>
           <Button
-            class="card button m-3 py-2 is-size-4 has-text-weight-bold"
-            style="width: 35%;box-shadow: 0px 0px 10px;"
+            class="card button m-3 py-2 is-size-6 has-text-weight-bold"
+            style="width: 42%;box-shadow: 0px 0px 10px;"
           >Trivia</button>
           <Button
-            class="card button m-3 py-2 is-size-4 has-text-weight-bold"
-            style="width: 35%;box-shadow: 0px 0px 10px;"
+            class="card button m-3 py-2 is-size-6 has-text-weight-bold"
+            style="width: 42%;box-shadow: 0px 0px 10px;"
           >Images</button>
         </div>
 
