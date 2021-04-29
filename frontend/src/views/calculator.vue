@@ -85,9 +85,9 @@
             <div class="column">
               <h4 class="has-text-weight-bold">NP Type</h4>
               <div class="buttons has-addons">
-                <button class="button is-danger is-selected">Buster</button>
-                <button class="button is-dark">Arts</button>
-                <button class="button is-dark">Quick</button>
+                <button class="button" @click="NP_type='Buster'" :class="NP_type=='Buster'?'is-danger':'is-dark'" >Buster</button>
+                <button class="button" @click="NP_type='Arts'" :class="NP_type=='Arts'?'is-info':'is-dark'">Arts</button>
+                <button class="button" @click="NP_type='Quick'" :class="NP_type=='Quick'?'is-success':'is-dark'">Quick</button>
               </div>
             </div>
             <div class="column">
@@ -295,7 +295,8 @@ export default {
         "Alterego",
         "Foreigner"
       ],
-      servants: [""]
+      NP_type: "Buster",
+      servants: [],
     };
   }
 };
