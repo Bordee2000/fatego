@@ -52,56 +52,64 @@ router = express.Router();
 //   }
 // });
 
-// router.post(
-//   "/blogs",
-//   upload.array("myImage", 5),
-//   async function (req, res, next) {
-//     if (req.method == "POST") {
-//       const file = req.files;
-//       let pathArray = [];
+//Insert Data servant
+router.post(
+  "/detailServant", async function (req, res, next) {
+      // const file = req.files;
+      // let pathArray = [];
 
-//       if (!file) {
-//         return res.status(400).json({ message: "Please upload a file" });
-//       }
+      // if (!file) {
+      //   return res.status(400).json({ message: "Please upload a file" });
+      // }
 
-//       const title = req.body.title;
-//       const content = req.body.content;
-//       const status = req.body.status;
-//       const pinned = req.body.pinned;
+      const name = req.body.name;
+      const atk = req.body.atk;
+      const hp = req.body.hp;
+      const attribute = req.body.attribute;
+      const growth_curve = req.body.growth_curve;
+      const star_absorption = req.body.star_absorption;
+      const star_generation = req.body.star_generation;
+      const np_charge_atk = req.body.np_charge_atk;
+      const np_charge_def = req.body.np_charge_def;
+      const death_rate = req.body.death_rate;
+      const alignments = req.body.alignments;
+      const gender = req.body.gender;
+      const stats = req.body.stats;
+      const bond_level = req.body.bond_level;
+      const deck_card = req.body.deck_card;
+      const class_name = req.body.class_name;
 
-//       const conn = await pool.getConnection();
-//       // Begin transaction
-//       await conn.beginTransaction();
 
-//       try {
-//         let results = await conn.query(
-//           "INSERT INTO blogs(title, content, status, pinned, `like`,create_date) VALUES(?, ?, ?, ?, 0,CURRENT_TIMESTAMP);",
-//           [title, content, status, pinned]
-//         );
-//         const blogId = results[0].insertId;
+      const conn = await pool.getConnection();
+      // Begin transaction
+      await conn.beginTransaction();
 
-//         req.files.forEach((file, index) => {
-//           let path = [blogId, file.path.substring(6), index == 0 ? 1 : 0];
-//           pathArray.push(path);
-//         });
+      try {
+        let [rows, cols] = await conn.query('SELECT class_id FROM class WHERE class_name = ?', [class_name]);
+        var class_id = rows[0].class_id
+        // const blogId = results[0].insertId;
 
-//         await conn.query(
-//           "INSERT INTO images(blog_id, file_path, main) VALUES ?;",
-//           [pathArray]
-//         );
+        // req.files.forEach((file, index) => {
+        //   let path = [blogId, file.path.substring(6), index == 0 ? 1 : 0];
+        //   pathArray.push(path);
+        // });
 
-//         await conn.commit();
-//         res.send("success!");
-//       } catch (err) {
-//         await conn.rollback();
-//         return res.status(400).json(err);
-//       } finally {
-//         console.log("finally");
-//         conn.release();
-//       }
-//     }
-//   }
-// );
+        await conn.query(
+          "insert into SERVANT(`name`, atk, hp, attribute, growth_curve, star_absorption, star_generation, np_charge_atk, np_charge_def, death_rate, alignments, gender, stats, bond_level, deck_card, class_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+          [name, atk, hp, attribute, growth_curve, star_absorption, star_generation, np_charge_atk, np_charge_def, death_rate, alignments, gender, stats, bond_level, deck_card, class_id]
+        );
+
+        await conn.commit();
+        res.send("Insert success!");
+      } catch (err) {
+        await conn.rollback();
+        return res.status(400).json(err);
+      } finally {
+        console.log("finally");
+        conn.release();
+      }
+  }
+);
 
 //filter Path
 router.get("/detailServant/filter", async function (req, res, next) {
@@ -115,10 +123,10 @@ router.get("/detailServant/filter", async function (req, res, next) {
     var re = convert.replace("[", "(");
     var re2 = re.replace("]", ")");
 
-    const sql0 = "SELECT * FROM servant WHERe attribute in "
+    const sql0 = "SELECT s.name, s.stats, i.saint_graphs FROM servant AS s RIGHT JOIN images AS i ON (s.id = i.servant_id) WHERE i.stage = ? and s.attribute in "
     console.log(sql0 + re2)
 
-    const [rows, fields] = await pool.query(sql0 + re2);
+    const [rows, fields] = await pool.query(sql0 + re2, [1]);
     return res.json(rows);
 
   } catch (error) {
@@ -165,6 +173,22 @@ router.get("/detailServant/:id", function (req, res, next) {
       return res.status(500).json(err);
     });
 });
+
+
+router.get("/detailServant/dialog/:id", async function (req, res, next) {
+  try {
+    const sql = "select servant.name, dialogue.occasion, dialogue.dialogue from servant join dialogue on (dialogue.servant_id = servant.id) where servant.id = ?"
+    const [rows, cols] = await pool.query(sql, [req.params.id]);
+    // console.log(req.params.id)
+    // console.log(rows)
+
+    return res.json(rows);
+  } catch (error) {
+      console.log(error)
+      return res.status(400).json(error)
+  }
+})
+
 
 // router.put("/blogs/:id", upload.array("myImage", 5), async function (req, res, next) {
 //   // Your code here
