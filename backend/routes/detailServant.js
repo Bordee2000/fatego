@@ -104,12 +104,27 @@ router = express.Router();
 // );
 
 //filter Path
-router.get("/detailServant/filter", function (req, res, next) {
-  const check = req.body.class
-  var convert = check.toString()
-  var val = "(" + convert + ")"
-  const sql0 = "SELECT * FROM servant WHERe id in "
-  const promise0 = pool.query(sql0 + val);
+router.get("/detailServant/filter", async function (req, res, next) {
+  try {
+
+    console.log(req.body.class)
+    const check = req.body.class
+
+    var convert = check.toString()
+    // var val = "(" + convert + ")"
+    var re = convert.replace("[", "(");
+    var re2 = re.replace("]", ")");
+
+    const sql0 = "SELECT * FROM servant WHERe attribute in "
+    console.log(sql0 + re2)
+
+    const [rows, fields] = await pool.query(sql0 + re2);
+    return res.json(rows);
+
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json(error)
+  }
 })
 
 // Blog detail
