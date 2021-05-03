@@ -109,13 +109,13 @@ router.get("/detailServant/:id", function (req, res, next) {
   const sql0 = "SELECT * FROM servant WHERe id = ?"
   const promise0 = pool.query(sql0, [req.params.id,]);
 
-  const sql1 = "SELECT * FROM servant AS s join images AS i ON (s.id = i.servant_id) join illustrator AS il ON (il.id = i.illustrator_id) WHERe s.id = ?"
+  const sql1 = "SELECT i.saint_graphs, i.stage, il.name FROM servant AS s join images AS i ON (s.id = i.servant_id) join illustrator AS il ON (il.id = i.illustrator_id) WHERe s.id = ?"
   const promise1 = pool.query(sql1, [req.params.id,]);
 
-  const sql2 = "SELECT * FROM servant AS s join servant_traits AS st ON (s.id = st.servant_id) join traits AS t ON (t.id = st.traits_id) WHERE s.id = ?"
+  const sql2 = "SELECT t.traits FROM servant AS s join servant_traits AS st ON (s.id = st.servant_id) join traits AS t ON (t.id = st.traits_id) WHERE s.id = ?"
   const promise2 = pool.query(sql2, [req.params.id,]);
 
-  const sql3 = "SELECT * FROM servant AS s join servant_voce_actor AS sva ON (s.id = sva.servant_id) join voice_actor AS va ON (va.id = sva.voice_actor_id) WHERE s.id = ?"
+  const sql3 = "SELECT va.name FROM servant AS s join servant_voce_actor AS sva ON (s.id = sva.servant_id) join voice_actor AS va ON (va.id = sva.voice_actor_id) WHERE s.id = ?"
   const promise3 = pool.query(sql3, [req.params.id,]);
 
   // Use Promise.all() to make sure that all queries are successful
@@ -129,7 +129,7 @@ router.get("/detailServant/:id", function (req, res, next) {
         servant: servants[0],
         image: images,
         trait: traits,
-        voice: voice,
+        voice: voice[0],
         error: null,
       });
     })
