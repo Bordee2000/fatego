@@ -3,27 +3,44 @@
     <div class="columns is-centered">
       <h1 class="is-size-1 title px-6">Team Recommend</h1>
     </div>
-    <!-- step image -->
+
+    <!-- team type -->
     <div class="columns is-centered">
       <div class="is-half has-text-centered">
-        <button class="button is-black p-5 m-5" disabled>Buster</button>
-        <button class="button is-black is-inverted p-5 m-5">Arks</button>
-        <button class="button is-black is-inverted p-5 m-5">Quick</button>
+        <button
+          class="button p-5 m-5"
+          @click="team_type='Buster'"
+          :class="team_type=='Buster'?'is-danger':'is-black is-inverted'"
+        >Buster</button>
+        <button
+          class="button p-5 m-5"
+          @click="team_type='Arts'"
+          :class="team_type=='Arts'?'is-info':'is-black is-inverted'"
+        >Arts</button>
+        <button
+          class="button p-5 m-5"
+          @click="team_type='Quick'"
+          :class="team_type=='Quick'?'is-success':'is-black is-inverted'"
+        >Quick</button>
       </div>
     </div>
 
-    <div class="columns is-centered">
-      <div class="card mr-1" v-for="item in length" :key="item">
-        <div class="card-image">
-          <figure class="image is-4by3">
-            <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image" />
-          </figure>
-        </div>
-        <div class="card-header-title">
-          <p>Servant Name</p>
-        </div>
+<div class="is-justify-content-center mx-6">
+    <div class="is-flex scroll-x p-0 m-0">
+      <div class="card mr-1" v-for="servant in all_servants" :key="servant.name" style="min-width: 10vw;">
+        <router-link to="/servantDetail/1">
+          <div class="card-image">
+            <figure class="image">
+              <img :src="servant.image" alt="Placeholder image" />
+            </figure>
+          </div>
+          <div class="card-header-title p-1 is-justify-content-center">
+            <p style="text-align: center;font-size: 0.8em">{{ servant.name }}</p>
+          </div>
+        </router-link>
       </div>
     </div>
+</div>
 
     <div class="columns is-centered my-5">
       <div class="is-max-desktop mx-6 p-5" style="border: 1px solid black;width: 80vw;">
@@ -39,21 +56,20 @@
             </thead>
 
             <tbody>
-              <tr class="mb-4" v-for="(item, index) in items" :key="item">
-                <th class="is-vcentered has-text-centered">Team {{index+1}}</th>
+              <tr class="mb-4" v-for="(item, index) in items" :key="index">
+                <th class="is-vcentered has-text-centered">Team {{index}}</th>
                 <td>
                   <div class="is-flex">
-                    <div class="card" v-for="list in item.a" :key="list">
-                      <div class="card-image">
-                        <figure class="image">
-                          <img
-                            src="https://bulma.io/images/placeholders/1280x960.png"
-                            alt="Placeholder image"
-                          />
-                        </figure>
-                      </div>
-                      <div class="card-header-title is-justify-content-center">
-                        <p style="font-size: 9px; text-align: center;">Servant Name</p>
+                    <div class="card" v-for="list in item.a" :key="list.name">
+                      <router-link to="/servantDetail/1">
+                        <div class="card-image">
+                          <figure class="image">
+                            <img :src="list.image" alt="Placeholder image" />
+                          </figure>
+                        </div>
+                      </router-link>
+                      <div class="card-header-title is-justify-content-center p-1">
+                        <p style="font-size: 10px; text-align: center;">{{ list.name }}</p>
                       </div>
                     </div>
                   </div>
@@ -61,17 +77,16 @@
 
                 <td>
                   <div class="is-flex">
-                    <div class="card" v-for="list in item.b" :key="list">
-                      <div class="card-image">
-                        <figure class="image">
-                          <img
-                            src="https://bulma.io/images/placeholders/1280x960.png"
-                            alt="Placeholder image"
-                          />
-                        </figure>
-                      </div>
-                      <div class="card-header-title is-justify-content-center">
-                        <p style="font-size: 9px; text-align: center;">Servant Name</p>
+                    <div class="card" v-for="list in item.b" :key="list.name">
+                      <router-link to="/servantDetail/1">
+                        <div class="card-image">
+                          <figure class="image">
+                            <img :src="list.image" alt="Placeholder image" />
+                          </figure>
+                        </div>
+                      </router-link>
+                      <div class="card-header-title is-justify-content-center p-1">
+                        <p style="font-size: 10px; text-align: center;">{{ list.name }}</p>
                       </div>
                     </div>
                   </div>
@@ -79,17 +94,16 @@
 
                 <td>
                   <div class="is-flex">
-                    <div class="card" v-for="list in item.c" :key="list">
-                      <div class="card-image">
-                        <figure class="image">
-                          <img
-                            src="https://bulma.io/images/placeholders/1280x960.png"
-                            alt="Placeholder image"
-                          />
-                        </figure>
-                      </div>
-                      <div class="card-header-title is-justify-content-center">
-                        <p style="font-size: 9px; text-align: center;">Servant Name</p>
+                    <div class="card" v-for="list in item.c" :key="list.name">
+                      <router-link to="/servantDetail/1">
+                        <div class="card-image">
+                          <figure class="image">
+                            <img :src="list.image" alt="Placeholder image" />
+                          </figure>
+                        </div>
+                      </router-link>
+                      <div class="card-header-title is-justify-content-center p-1">
+                        <p style="font-size: 10px; text-align: center;">{{ list.name }}</p>
                       </div>
                     </div>
                   </div>
@@ -107,13 +121,153 @@
 export default {
   data() {
     return {
-      items: [
-        { a: [1, 2, 3], b: [3, 4, 5], c: [5, 6, 7] },
-        { a: [1, 2], b: [3, 4], c: [5, 6] },
-        { a: [1], b: [3], c: [5] },
-        { a: [1], b: [3], c: [5] }
-      ],
-      length: [1,2,3,4,5,6,7],
+      team_type: "Buster",
+      items: {
+        1: {
+          a: [
+            {
+              name: "Merlin (Prototype)",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/5/5e/MerlinPrototypeArcadeIcon.png"
+            },
+            {
+              name: "Artoria Pendragon",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/e/ed/ArtoriaPendragonIcon.png"
+            },
+            {
+              name: "Merlin",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/b/b0/MerlinStage2Icon.png"
+            }
+          ],
+          b: [
+            {
+              name: "Sima Yi (Reines)",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/b/b6/S241Icon.png"
+            },
+            {
+              name: "Arjuna (Alter)",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/c/c6/S247Icon.png"
+            },
+            {
+              name: "Mashu Kyrielight",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/3/30/MashuIconSR.png"
+            }
+          ],
+          c: [
+            {
+              name: "Taira no Kagekiyo",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/2/23/S303Icon.png"
+            },
+            {
+              name: "B B",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/e/e8/BBicon.png"
+            }
+          ]
+        },
+        2: {
+          a: [
+            {
+              name: "Sima Yi (Reines)",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/b/b6/S241Icon.png"
+            },
+            {
+              name: "B B",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/e/e8/BBicon.png"
+            },
+            {
+              name: "Merlin",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/b/b0/MerlinStage2Icon.png"
+            }
+          ],
+          b: [
+            {
+              name: "Caren C Hortensia (Amor Caren)",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/7/72/S305Icon.png"
+            },
+            {
+              name: "Merlin",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/b/b0/MerlinStage2Icon.png"
+            },
+            {
+              name: "Taira no Kagekiyo",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/2/23/S303Icon.png"
+            }
+          ],
+          c: [
+            {
+              name: "Mata Hari",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/0/0d/MataHariGoldIcon.png"
+            }
+          ]
+        }
+      },
+      all_servants: [
+        {
+          name: "Merlin (Prototype)",
+          image:
+            "https://static.wikia.nocookie.net/fategrandorder/images/5/5e/MerlinPrototypeArcadeIcon.png"
+        },
+        {
+          name: "Artoria Pendragon",
+          image:
+            "https://static.wikia.nocookie.net/fategrandorder/images/e/ed/ArtoriaPendragonIcon.png"
+        },
+        {
+          name: "Merlin",
+          image:
+            "https://static.wikia.nocookie.net/fategrandorder/images/b/b0/MerlinStage2Icon.png"
+        },
+
+        {
+          name: "Sima Yi (Reines)",
+          image:
+            "https://static.wikia.nocookie.net/fategrandorder/images/b/b6/S241Icon.png"
+        },
+        {
+          name: "Arjuna (Alter)",
+          image:
+            "https://static.wikia.nocookie.net/fategrandorder/images/c/c6/S247Icon.png"
+        },
+        {
+          name: "Mashu Kyrielight",
+          image:
+            "https://static.wikia.nocookie.net/fategrandorder/images/3/30/MashuIconSR.png"
+        },
+        {
+          name: "Taira no Kagekiyo",
+          image:
+            "https://static.wikia.nocookie.net/fategrandorder/images/2/23/S303Icon.png"
+        },
+        {
+          name: "B B",
+          image:
+            "https://static.wikia.nocookie.net/fategrandorder/images/e/e8/BBicon.png"
+        },
+        {
+          name: "Okita Sōji (Alter)",
+          image:
+            "https://static.wikia.nocookie.net/fategrandorder/images/e/e7/Icon_S209.png"
+        },
+        {
+          name: "Caren C Hortensia (Amor Caren)",
+          image:
+            "https://static.wikia.nocookie.net/fategrandorder/images/7/72/S305Icon.png"
+        },
+      ]
     };
   }
 };
@@ -126,7 +280,23 @@ export default {
 .table tbody td {
   border: none !important;
 }
-.is-flex .card{
+.is-flex .card {
   width: 7vw !important;
 }
+.scroll-x {
+  overflow-y: scroll;
+}
+
+.scroll-x::-webkit-scrollbar {
+  height: 10px;
+  margin: auto auto;
+}
+.scroll-x::-webkit-scrollbar-thumb {
+  background-color: rgb(198, 195, 195);
+  border-radius: 20px;
+}
+.scroll-x::-webkit-scrollbar-thumb:hover{
+    background-color: rgb(121, 121, 121);
+}
+ 
 </style>

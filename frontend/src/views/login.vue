@@ -68,7 +68,18 @@
         <!-- username register -->
         <div class="mb-5">
           <label class="is-size-5" for>Username</label>
-          <input class="input" type="text" />
+          <div class="control">
+            <input
+              v-model="$v.username.$model"
+              :class="{'is-danger': $v.username.$error}"
+              class="input"
+              type="text"
+            />
+          </div>
+          <template v-if="$v.username.$error">
+            <p class="help is-danger" v-if="!$v.username.alphaNum">This field is alpha and number</p>
+            <p class="help is-danger" v-if="!$v.username.maxLength">This field is to long</p>
+          </template>
         </div>
 
         <!-- email register -->
@@ -107,9 +118,7 @@
             </span>
           </div>
           <template v-if="$v.register_password.$error">
-            <p class="help is-danger" v-if="!$v.register_password.required">This field is required</p>
             <p class="help is-danger" v-if="!$v.register_password.minLength">Password to short</p>
-            <p class="help is-danger" v-if="!$v.register_password.complexPassword">Password to easy</p>
           </template>
         </div>
 
@@ -141,7 +150,8 @@ import {
   email,
   minLength,
   maxLength,
-  sameAs
+  sameAs,
+  alphaNum,
 } from "vuelidate/lib/validators";
 import axios from "axios";
 
@@ -159,12 +169,19 @@ export default {
     login_email: {
       email
     },
-    login_password: {},
-    username: {},
+    login_password: {
+      minLength: minLength(8)
+    },
+    username: {
+      alphaNum: alphaNum,
+      maxLength: minLength(12)
+    },
     register_email: {
       email
     },
-    register_password: {}
+    register_password: {
+      minLength: minLength(8)
+    }
   }
 };
 </script>
