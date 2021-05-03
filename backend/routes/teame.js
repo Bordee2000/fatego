@@ -5,7 +5,36 @@ const pool = require("../config");
 const router = express.Router();
 
 // Get comment
-router.get('/:blogId/comments', function (req, res, next) {
+router.get('/team', async function (req, res, next) {
+    try {
+        const type = req.body.type
+        const [rows, cols] = await pool.query("SELECT s.id, s.name, s.stats, s.deck_card, i.saint_graphs, i.icon FROM servant as s join images as i on (s.id = i.servant_id) where i.stage = ?", [1])
+        var result = []
+
+        rows.forEach(element => {
+            var deck = element.deck_card
+            if(type == "Q"){
+                if(deck.match(/Q/)){
+                    result.push(element)
+                }
+            }
+            else if(type == "A"){
+                if(deck.match(/A/)){
+                    result.push(element)
+                }
+            }
+            else if(type == "B"){
+                if(deck.match(/B/)){
+                    result.push(element)
+                }
+            }
+        })
+        return res.json(result);
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json(error)
+    }
+
 });
 
 // Create new comment
