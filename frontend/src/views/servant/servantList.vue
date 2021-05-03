@@ -42,17 +42,17 @@
       </nav>
 
       <section class="columns is-multiline">
-        <div class="card column is-2 mx-4 my-2 pb-0" v-for="servant in servants" :key="servant">
+        <div class="card column is-2 mx-4 my-2 pb-0" v-for="servant in listServant" :key="servant.id">
           <div class="card-image">
             <!-- send id -->
-            <router-link to="/servantDetail/1">
+            <router-link :to="`/servantDetail/${servant.servant_id}`">
               <figure class="image">
-                <img :src="servant.image" alt />
+                <img :src="servant.saint_graphs" alt />
               </figure>
             </router-link>
           </div>
           <div class="card-header-title is-justify-content-center p-0">
-            <p style="text-align: center;">{{ servant.name }}</p>
+            <p style="text-align: center;">{{ servant.name }} {{servant.stats}}★</p>
           </div>
         </div>
       </section>
@@ -61,64 +61,92 @@
 </template>
 
 <script>
+// export default {
+//   data() {
+//     return {
+//       servants: [
+//         {
+//           name: "Mashu Kyrielight 3★",
+//           image:
+//             "https://static.wikia.nocookie.net/fategrandorder/images/b/b2/Shieldercardborder1.png"
+//         },
+//         {
+//           name: "Jeanne d'Arc 5★",
+//           image:
+//             "https://static.wikia.nocookie.net/fategrandorder/images/1/16/Rulercardborder1.png"
+//         },
+//         {
+//           name: "Artoria Pendragon (Lancer Alter) 4★",
+//           image:
+//             "https://static.wikia.nocookie.net/fategrandorder/images/2/28/Lancercardborder10.png"
+//         },
+
+//         {
+//           name: "Okita Sōji 5★",
+//           image:
+//             "https://static.wikia.nocookie.net/fategrandorder/images/8/8b/Sabercardborder10.png"
+//         },
+//         {
+//           name: "Artoria Pendragon (Alter) 4★",
+//           image:
+//             "https://static.wikia.nocookie.net/fategrandorder/images/0/09/Sabercardborder2.png"
+//         },
+//         {
+//           name: "Siegfried 4★",
+//           image:
+//             "https://static.wikia.nocookie.net/fategrandorder/images/d/de/Sabercardborder5.png"
+//         },
+
+//         {
+//           name: "EMIYA 4★",
+//           image:
+//             "https://static.wikia.nocookie.net/fategrandorder/images/8/8c/Archercardborder1.png"
+//         },
+//         {
+//           name: "Gilgamesh 5★",
+//           image:
+//             "https://static.wikia.nocookie.net/fategrandorder/images/b/bf/Archercardborder2.png"
+//         },
+//         {
+//           name: "Asagami Fujino 4★",
+//           image:
+//             "https://static.wikia.nocookie.net/fategrandorder/images/5/5c/Archercardborder25.png"
+//         },
+
+//         {
+//           name: "Katsushika Hokusai 5★",
+//           image: 'https://static.wikia.nocookie.net/fategrandorder/images/7/76/Foreignercardborder2.png'
+//         }
+//       ]
+//     };
+//   }
+// };
+
+import axios from 'axios';
+
 export default {
+  created() {
+    axios.get("http://localhost:3000/")
+        .then((response) => {
+          this.listServant = response.data; // เอา response ที่เป็น data เท่านั้น
+          // console.log(this.listServant)
+          
+          this.listServant.forEach(element => {
+            let str = element.saint_graphs
+            let [part1, part2] = str.split("/revision");
+            element.saint_graphs = part1
+            // console.log(element.saint_graphs)
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
   data() {
     return {
-      servants: [
-        {
-          name: "Mashu Kyrielight 3★",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/b/b2/Shieldercardborder1.png"
-        },
-        {
-          name: "Jeanne d'Arc 5★",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/1/16/Rulercardborder1.png"
-        },
-        {
-          name: "Artoria Pendragon (Lancer Alter) 4★",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/2/28/Lancercardborder10.png"
-        },
-
-        {
-          name: "Okita Sōji 5★",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/8/8b/Sabercardborder10.png"
-        },
-        {
-          name: "Artoria Pendragon (Alter) 4★",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/0/09/Sabercardborder2.png"
-        },
-        {
-          name: "Siegfried 4★",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/d/de/Sabercardborder5.png"
-        },
-
-        {
-          name: "EMIYA 4★",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/8/8c/Archercardborder1.png"
-        },
-        {
-          name: "Gilgamesh 5★",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/b/bf/Archercardborder2.png"
-        },
-        {
-          name: "Asagami Fujino 4★",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/5/5c/Archercardborder25.png"
-        },
-
-        {
-          name: "Katsushika Hokusai 5★",
-          image: 'https://static.wikia.nocookie.net/fategrandorder/images/7/76/Foreignercardborder2.png'
-        }
-      ]
-    };
+      listServant : [],
+    }
   }
-};
+}
 </script>
