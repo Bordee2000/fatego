@@ -5,10 +5,16 @@ router = express.Router();
 
 router.get("/", async function (req, res, next) {
   try {
+    const search = req.query.search || ''
+    let sql = 'SELECT s.name, s.stats, i.saint_graphs FROM servant AS s RIGHT JOIN images AS i ON (s.id = i.servant_id) WHERE i.stage = ?'
+    let val = [1]
 
-    let sql = 'SELECT * FROM servant AS s RIGHT JOIN images AS i ON (s.id = i.servant_id) WHERE i.stage = ?;'
-
-    const [rows, fields] = await pool.query(sql, [1]);
+    if (search.length > 0) {
+      sql += " AND s.name LIKE ?;"
+      val = [1, `%${search}%`]
+      console.log(sql)
+    }
+    const [rows, fields] = await pool.query(sql, val);
     return res.json(rows);
   } catch (err) {
     console.log(err)
