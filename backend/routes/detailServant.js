@@ -123,7 +123,7 @@ router.get("/detailServant/filter", async function (req, res, next) {
     var re = convert.replace("[", "(");
     var re2 = re.replace("]", ")");
 
-    const sql0 = "SELECT s.name, s.stats, i.saint_graphs FROM servant AS s RIGHT JOIN images AS i ON (s.id = i.servant_id) WHERE i.stage = ? and s.attribute in "
+    const sql0 = "SELECT s.name, s.stats, i.saint_graphs FROM servant AS s RIGHT JOIN images AS i ON (s.id = i.servant_id) join class AS c on (c.class_id = s.class_id)  WHERE i.stage = ? and c.class_name in "
     console.log(sql0 + re2)
 
     const [rows, fields] = await pool.query(sql0 + re2, [1]);
@@ -134,6 +134,26 @@ router.get("/detailServant/filter", async function (req, res, next) {
     return res.status(400).json(error)
   }
 })
+
+router.get("/detailServant/filter/sort", async function (req, res, next) {
+  try {
+    const sort = req.body.sort
+    console.log(sort)
+    // const test = 'select s.name, s.stats, i.saint_graphs from servant as s join images as i on (s.id = i.servant_id) WHERE i.stage = ? order by atk'
+    const sql = 'SELECT s.name, s.stats, i.saint_graphs FROM servant AS s JOIN images AS i ON (s.id = i.servant_id) WHERE i.stage = ? order by '
+    const [rows, fields] = await pool.query(sql+ sort, [1]);
+    return res.json(rows);
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json(err)
+  }
+})
+
+
+// router.get("/detailServant/skill/:id", function (req, res, next) {
+//   const sql = "SELECT *"
+// })
+
 
 // Blog detail
 router.get("/detailServant/:id", function (req, res, next) {

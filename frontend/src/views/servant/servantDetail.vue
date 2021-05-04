@@ -103,11 +103,11 @@
       </div>
 
       <!-- center image -->
-      <div class="column p-0 is-4 mx-6">
+      <!-- <div class="column p-0 is-4 mx-6">
         <figure class="image">
           <img :src="servant_image[select_image].saint_graphs" alt="">
         </figure>
-      </div>
+      </div> -->
 
       <!-- right -->
       <div class="column is-3">
