@@ -141,7 +141,7 @@ router.get("/detailServant/filter/sort", async function (req, res, next) {
     console.log(sort)
     // const test = 'select s.name, s.stats, i.saint_graphs from servant as s join images as i on (s.id = i.servant_id) WHERE i.stage = ? order by atk'
     const sql = 'SELECT s.name, s.stats, i.saint_graphs FROM servant AS s JOIN images AS i ON (s.id = i.servant_id) WHERE i.stage = ? order by '
-    const [rows, fields] = await pool.query(sql+ sort, [1]);
+    const [rows, fields] = await pool.query(sql + sort, [1]);
     return res.json(rows);
   } catch (err) {
     console.log(err)
