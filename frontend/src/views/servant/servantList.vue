@@ -16,16 +16,17 @@
                   type="text"
                   placeholder="Search"
                   style="border-radius: 25px;padding-right: 13vw"
+                  v-model="search_name"
                 />
                 <span class="icon is-small is-left">
                   <i class="fas fa-search"></i>
                 </span>
               </p>
-              <div class="level-item">
+              <!-- <div class="level-item">
                 <div class="px-2">
                   <a class="button is-rounded has-text-weight-bold is-danger">Add Servant</a>
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -57,9 +58,9 @@
               </div>
               <div class="dropdown-menu pt-0" style="min-width: 1vw;" id="dropdown-menu" role="menu">
                 <div class="dropdown-content">
-                  <a class="dropdown-item has-text-weight-bold" @click="sortType='HP'" :class="sortType=='HP'?'is-active':''">HP</a>
-                  <a class="dropdown-item has-text-weight-bold" @click="sortType='ATK'" :class="sortType=='ATK'?'is-active':''">ATK</a>
-                  <a class="dropdown-item has-text-weight-bold" @click="sortType='NAME'" :class="sortType=='NAME'?'is-active':''">NAME</a>
+                  <a class="dropdown-item has-text-weight-bold" @click="sortType='HP';sort()" :class="sortType=='HP'?'is-active':''">HP</a>
+                  <a class="dropdown-item has-text-weight-bold" @click="sortType='ATK';sort()" :class="sortType=='ATK'?'is-active':''">ATK</a>
+                  <a class="dropdown-item has-text-weight-bold" @click="sortType='NAME';sort()" :class="sortType=='NAME'?'is-active':''">NAME</a>
                 </div>
               </div>
             </div>
@@ -75,14 +76,14 @@
         >
           <div class="card-image">
             <!-- send id -->
-            <router-link to="/servantDetail/1">
+            <router-link :to="'/servantDetail/'+servant.id">
               <figure class="image">
-                <img :src="servant.image" alt />
+                <img :src="servant.saint_graphs" alt />
               </figure>
             </router-link>
           </div>
           <div class="card-header-title is-justify-content-center p-0">
-            <p style="text-align: center;">{{ servant.name }}</p>
+            <p style="text-align: center;">{{ servant.name }} {{ servant.stats }}★</p>
           </div>
         </div>
       </section>
@@ -137,6 +138,7 @@
 </template>
 
 <script>
+import axios from '@/plugins/axios';
 export default {
   data() {
     return {
@@ -156,63 +158,10 @@ export default {
         "Alter Ego": false,
         Foreigner: false
       },
-      servants: [
-        {
-          name: "Mashu Kyrielight 3★",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/b/b2/Shieldercardborder1.png"
-        },
-        {
-          name: "Jeanne d'Arc 5★",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/1/16/Rulercardborder1.png"
-        },
-        {
-          name: "Artoria Pendragon (Lancer Alter) 4★",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/2/28/Lancercardborder10.png"
-        },
-
-        {
-          name: "Okita Sōji 5★",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/8/8b/Sabercardborder10.png"
-        },
-        {
-          name: "Artoria Pendragon (Alter) 4★",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/0/09/Sabercardborder2.png"
-        },
-        {
-          name: "Siegfried 4★",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/d/de/Sabercardborder5.png"
-        },
-
-        {
-          name: "EMIYA 4★",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/8/8c/Archercardborder1.png"
-        },
-        {
-          name: "Gilgamesh 5★",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/b/bf/Archercardborder2.png"
-        },
-        {
-          name: "Asagami Fujino 4★",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/5/5c/Archercardborder25.png"
-        },
-
-        {
-          name: "Katsushika Hokusai 5★",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/7/76/Foreignercardborder2.png"
-        }
-      ],
+      servants: [],
       select_button: "",
       sortType: "",
+      search_name: "",
     };
   },
   methods: {
@@ -223,13 +172,90 @@ export default {
         }
         if (!value && this.select_filter.includes(key)) {
           const classIndex = this.select_filter.findIndex(e => e == key);
-          console.log(classIndex);
           this.select_filter.splice(classIndex, 1);
         }
       }
-      console.log(this.select_filter);
+      this.filter()
+    },
+    addServants(){
+      axios 
+      .get("/")
+      .then((res) => {
+        this.servants = res.data;
+        for (let i = 0; i < this.servants.length; i++) {
+          const image = this.servants[i].saint_graphs.split('/revision')[0];
+          this.servants[i].saint_graphs = image;
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
+    },
+    filter(){
+      if(this.select_filter.length > 0){
+      axios
+      .get("/detailServant/filter", {
+        params: {
+          class: this.select_filter
+        }
+      })
+      .then((res) => {
+        this.servants = res.data;
+        for (let i = 0; i < this.servants.length; i++) {
+          const image = this.servants[i].saint_graphs.split('/revision')[0];
+          this.servants[i].saint_graphs = image;
+        }
+        console.log(res.data);
+      }).catch((err) => {
+        console.log(err);
+      });
+      }
+      else{
+        this.addServants()
+      }
+    },
+    sort(){
+      axios
+      .get("/detailServant/filter/sort", {
+        params: {
+          sort: this.sortType
+        }
+      })
+      .then((res) => {
+        this.servants = res.data
+        for (let i = 0; i < this.servants.length; i++) {
+          const image = this.servants[i].saint_graphs.split('/revision')[0];
+          this.servants[i].saint_graphs = image;
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
+    },
+    search(){
+      axios
+      .get("/", {
+        params: {
+          search: this.search_name
+        }
+      })
+      .then((res) => {
+        this.servants = res.data
+        for (let i = 0; i < this.servants.length; i++) {
+          const image = this.servants[i].saint_graphs.split('/revision')[0];
+          this.servants[i].saint_graphs = image;
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
+    },
+  },
+  watch: {
+    search_name: function (val) {
+      this.search()
     }
-  }
+  },
+  mounted() {
+    this.addServants()
+  },
 };
 </script>
 

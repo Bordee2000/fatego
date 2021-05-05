@@ -138,7 +138,10 @@
           </label>
           <template v-if="$v.accept.$error">
             {{!$v.accept.isAccept}}
-            <p class="help is-danger" v-if="!$v.accept.required || !$v.accept.isAccept">Please Accept</p>
+            <p
+              class="help is-danger"
+              v-if="!$v.accept.required || !$v.accept.isAccept"
+            >Please Accept</p>
           </template>
         </div>
 
@@ -157,6 +160,7 @@
 </template>
 
 <script>
+import axios from "@/plugins/axios";
 import {
   required,
   email,
@@ -164,12 +168,11 @@ import {
   maxLength,
   sameAs,
   alphaNum,
-  helpers,
+  helpers
 } from "vuelidate/lib/validators";
-import axios from "axios";
 
 function isAccept(value) {
-  return value
+  return value;
 }
 
 export default {
@@ -192,7 +195,7 @@ export default {
     login_password: {
       minLength: minLength(8),
       required,
-      alphaNum,
+      alphaNum
     },
     username: {
       alphaNum: alphaNum,
@@ -209,7 +212,7 @@ export default {
     },
     accept: {
       required,
-      isAccept: isAccept,
+      isAccept: isAccept
     }
   },
   methods: {
@@ -217,7 +220,20 @@ export default {
       this.$v.login_email.$touch();
       this.$v.login_password.$touch();
       if (!this.$v.login_email.$invalid && !this.$v.login_password.$invalid) {
-        alert("You are successfully login");
+        let data = {
+          email: this.login_email,
+          password: this.login_password
+        };
+        axios
+          .post("/user/login", data)
+          .then(res => {
+            alert(res.data.message);
+            this.$router.push({ path: "/" });
+          })
+          .catch(err => {
+            console.log(err);
+            alert(err.response.data.details[0].message);
+          });
       }
     },
     register() {
@@ -228,10 +244,30 @@ export default {
       if (
         !this.$v.username.$invalid &&
         !this.$v.register_email.$invalid &&
-        !this.$v.register_password.$invalid && 
+        !this.$v.register_password.$invalid &&
         !this.$v.accept.$invalid
       ) {
-        alert("You are successfully register");
+        let data = {
+          username: this.username,
+          password: this.register_password,
+          email: this.register_email
+        };
+        axios
+          .post("/user/signup", data)
+          .then(res => {
+            alert(res.data);
+            this.username = "";
+            this.register_password = "";
+            this.register_email = "";
+            this.$v.username.$error = false;
+            this.$v.register_password.$error = false;
+            this.$v.register_email.$error = false;
+            console.log(this.$v.username.$error);
+          })
+          .catch(err => {
+            console.log(err);
+            alert(err.response.data.details[0].message);
+          });
       }
     }
   }

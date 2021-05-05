@@ -9,18 +9,18 @@
       <div class="is-half has-text-centered">
         <button
           class="button p-5 m-5"
-          @click="team_type='Buster'"
-          :class="team_type=='Buster'?'is-danger':'is-black is-inverted'"
+          @click="getTeams('B')"
+          :class="team_type=='B'?'is-danger':'is-black is-inverted'"
         >Buster</button>
         <button
           class="button p-5 m-5"
-          @click="team_type='Arts'"
-          :class="team_type=='Arts'?'is-info':'is-black is-inverted'"
+          @click="getTeams('A')"
+          :class="team_type=='A'?'is-info':'is-black is-inverted'"
         >Arts</button>
         <button
           class="button p-5 m-5"
-          @click="team_type='Quick'"
-          :class="team_type=='Quick'?'is-success':'is-black is-inverted'"
+          @click="getTeams('Q')"
+          :class="team_type=='Q'?'is-success':'is-black is-inverted'"
         >Quick</button>
       </div>
     </div>
@@ -30,13 +30,13 @@
         <div
           class="card mr-1"
           v-for="servant in all_servants"
-          :key="servant.name"
+          :key="servant.id"
           style="min-width: 10vw;"
         >
           <a to="/servantDetail/1">
             <div class="card-image">
               <figure class="image">
-                <img :src="servant.image" alt="Placeholder image" />
+                <img :src="servant.icon" alt="Placeholder image" />
               </figure>
             </div>
             <div class="card-header-title p-1 is-justify-content-center">
@@ -123,17 +123,19 @@
 </template>
 
 <script>
+import axios from "axios";
+// @ is an alias to /src
 export default {
   data() {
     return {
-      team_type: "Buster",
+      team_type: "",
       items: {
         1: {
           a: [
             {
-              name: "Merlin (Prototype)",
+              name: "Arjuna",
               image:
-                "https://static.wikia.nocookie.net/fategrandorder/images/5/5e/MerlinPrototypeArcadeIcon.png"
+                "https://static.wikia.nocookie.net/fategrandorder/images/0/03/Arjunaicon.png"
             },
             {
               name: "Artoria Pendragon",
@@ -141,21 +143,130 @@ export default {
                 "https://static.wikia.nocookie.net/fategrandorder/images/e/ed/ArtoriaPendragonIcon.png"
             },
             {
-              name: "Merlin",
+              name: "Mashu Kyrielight",
               image:
-                "https://static.wikia.nocookie.net/fategrandorder/images/b/b0/MerlinStage2Icon.png"
+                "https://static.wikia.nocookie.net/fategrandorder/images/3/30/MashuIconSR.png"
             }
           ],
           b: [
             {
-              name: "Sima Yi (Reines)",
+              name: "Demon King Nobunaga",
               image:
-                "https://static.wikia.nocookie.net/fategrandorder/images/b/b6/S241Icon.png"
+                "https://static.wikia.nocookie.net/fategrandorder/images/c/c3/S250Icon.png"
             },
             {
-              name: "Arjuna (Alter)",
+              name: "Shi Huang Di",
               image:
-                "https://static.wikia.nocookie.net/fategrandorder/images/c/c6/S247Icon.png"
+                "https://static.wikia.nocookie.net/fategrandorder/images/e/e5/S229Icon.png"
+            },
+          ],
+          c: [
+            {
+              name: "Leonardo Da Vinci",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/d/d0/Davinciicon.png"
+            },
+          ]
+        },
+        2: {
+          a: [
+            {
+              name: "Leonardo Da Vinci",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/d/d0/Davinciicon.png"
+            },
+            {
+              name: "Shi Huang Di",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/e/e5/S229Icon.png"
+            },
+            {
+              name: "Mashu Kyrielight",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/3/30/MashuIconSR.png"
+            }
+          ],
+          b: [
+            {
+              name: "Astolfo",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/c/ce/Astolfoicon.png"
+            },
+            {
+              name: "Ryōgi Shiki (Assassin)",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/1/10/Ryougiassassinicon.png"
+            },
+          ],
+          c: [
+            {
+              name: "Arjuna",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/0/03/Arjunaicon.png"
+            },
+          ]
+        },
+        3: {
+          a: [
+            {
+              name: "Nagao Kagetora",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/9/91/S252Icon.png"
+            },
+            {
+              name: "Astolfo",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/c/ce/Astolfoicon.png"
+            },
+            {
+              name: "Vlad III",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/a/aa/Vladicon.png"
+            }
+          ],
+          b: [
+            {
+              name: "Leonardo Da Vinci",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/d/d0/Davinciicon.png"
+            },
+            {
+              name: "Shi Huang Di",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/e/e5/S229Icon.png"
+            },
+          ],
+          c: [
+            {
+              name: "Artoria Pendragon",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/e/ed/ArtoriaPendragonIcon.png"
+            },
+          ]
+        },
+        4: {
+          a: [
+            {
+              name: "Shi Huang Di",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/e/e5/S229Icon.png"
+            },
+            {
+              name: "Nagao Kagetora",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/9/91/S252Icon.png"
+            },
+            {
+              name: "Astolfo",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/c/ce/Astolfoicon.png"
+            },
+          ],
+          b: [
+            {
+              name: "Ryōgi Shiki (Assassin)",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/1/10/Ryougiassassinicon.png"
             },
             {
               name: "Mashu Kyrielight",
@@ -165,120 +276,288 @@ export default {
           ],
           c: [
             {
-              name: "Taira no Kagekiyo",
+              name: "Demon King Nobunaga",
               image:
-                "https://static.wikia.nocookie.net/fategrandorder/images/2/23/S303Icon.png"
+                "https://static.wikia.nocookie.net/fategrandorder/images/c/c3/S250Icon.png"
+            }
+          ]
+        },
+        5: {
+          a: [
+            {
+              name: "Nagao Kagetora",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/9/91/S252Icon.png"
             },
             {
-              name: "B B",
+              name: "Demon King Nobunaga",
               image:
-                "https://static.wikia.nocookie.net/fategrandorder/images/e/e8/BBicon.png"
+                "https://static.wikia.nocookie.net/fategrandorder/images/c/c3/S250Icon.png"
+            },
+            {
+              name: "Ryōgi Shiki (Assassin)",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/1/10/Ryougiassassinicon.png"
+            },
+          ],
+          b: [
+            {
+              name: "Vlad III",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/a/aa/Vladicon.png"
+            },
+            {
+              name: "Arjuna",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/0/03/Arjunaicon.png"
+            }
+          ],
+          c: [
+            {
+              name: "Astolfo",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/c/ce/Astolfoicon.png"
+            }
+          ]
+        },
+
+
+      },
+      all_servants: []
+    };
+  },
+  methods: {
+    getTeams(value) {
+      this.team_type = value
+      axios
+        .get("http://localhost:3000/team", {
+          params: {
+            type: this.team_type
+          }
+        })
+        .then((response) => {
+          this.all_servants = response.data;
+
+          this.all_servants.forEach(element => {
+            let str = element.icon
+            let [part1, part2] = str.split("/revision");
+            element.icon = part1
+            // console.log(element.saint_graphs)
+          });
+          console.log(this.all_servants)
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+    }
+  },
+  watch:{
+    team_type: function(val) {
+      if(val == 'B'){
+        this.items = {
+        1: {
+          a: [
+            {
+              name: "Arjuna",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/0/03/Arjunaicon.png"
+            },
+            {
+              name: "Artoria Pendragon",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/e/ed/ArtoriaPendragonIcon.png"
+            },
+            {
+              name: "Mashu Kyrielight",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/3/30/MashuIconSR.png"
+            }
+          ],
+          b: [
+            {
+              name: "Demon King Nobunaga",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/c/c3/S250Icon.png"
+            },
+            {
+              name: "Shi Huang Di",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/e/e5/S229Icon.png"
+            },
+          ],
+          c: [
+            {
+              name: "Leonardo Da Vinci",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/d/d0/Davinciicon.png"
+            },
+          ]
+        },
+        2: {
+          a: [
+            {
+              name: "Leonardo Da Vinci",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/d/d0/Davinciicon.png"
+            },
+            {
+              name: "Shi Huang Di",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/e/e5/S229Icon.png"
+            },
+            {
+              name: "Mashu Kyrielight",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/3/30/MashuIconSR.png"
+            }
+          ],
+          b: [
+            {
+              name: "Astolfo",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/c/ce/Astolfoicon.png"
+            },
+            {
+              name: "Ryōgi Shiki (Assassin)",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/1/10/Ryougiassassinicon.png"
+            },
+          ],
+          c: [
+            {
+              name: "Arjuna",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/0/03/Arjunaicon.png"
+            },
+          ]
+        },
+
+        }
+      }
+      else if(val == 'A'){
+        this.items = {
+        1: {
+          a: [
+            {
+              name: "Nagao Kagetora",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/9/91/S252Icon.png"
+            },
+            {
+              name: "Astolfo",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/c/ce/Astolfoicon.png"
+            },
+            {
+              name: "Vlad III",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/a/aa/Vladicon.png"
+            }
+          ],
+          b: [
+            {
+              name: "Leonardo Da Vinci",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/d/d0/Davinciicon.png"
+            },
+            {
+              name: "Shi Huang Di",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/e/e5/S229Icon.png"
+            },
+          ],
+          c: [
+            {
+              name: "Artoria Pendragon",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/e/ed/ArtoriaPendragonIcon.png"
+            },
+          ]
+        },
+      }
+      }
+      else if(val == 'Q'){
+        this.items = {
+        1: {
+          a: [
+            {
+              name: "Shi Huang Di",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/e/e5/S229Icon.png"
+            },
+            {
+              name: "Nagao Kagetora",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/9/91/S252Icon.png"
+            },
+            {
+              name: "Astolfo",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/c/ce/Astolfoicon.png"
+            },
+          ],
+          b: [
+            {
+              name: "Ryōgi Shiki (Assassin)",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/1/10/Ryougiassassinicon.png"
+            },
+            {
+              name: "Mashu Kyrielight",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/3/30/MashuIconSR.png"
+            }
+          ],
+          c: [
+            {
+              name: "Demon King Nobunaga",
+              image:
+                "https://static.wikia.nocookie.net/fategrandorder/images/c/c3/S250Icon.png"
             }
           ]
         },
         2: {
           a: [
             {
-              name: "Sima Yi (Reines)",
+              name: "Nagao Kagetora",
               image:
-                "https://static.wikia.nocookie.net/fategrandorder/images/b/b6/S241Icon.png"
+                "https://static.wikia.nocookie.net/fategrandorder/images/9/91/S252Icon.png"
             },
             {
-              name: "B B",
+              name: "Demon King Nobunaga",
               image:
-                "https://static.wikia.nocookie.net/fategrandorder/images/e/e8/BBicon.png"
+                "https://static.wikia.nocookie.net/fategrandorder/images/c/c3/S250Icon.png"
             },
             {
-              name: "Merlin",
+              name: "Ryōgi Shiki (Assassin)",
               image:
-                "https://static.wikia.nocookie.net/fategrandorder/images/b/b0/MerlinStage2Icon.png"
-            }
+                "https://static.wikia.nocookie.net/fategrandorder/images/1/10/Ryougiassassinicon.png"
+            },
           ],
           b: [
             {
-              name: "Caren C Hortensia (Amor Caren)",
+              name: "Vlad III",
               image:
-                "https://static.wikia.nocookie.net/fategrandorder/images/7/72/S305Icon.png"
+                "https://static.wikia.nocookie.net/fategrandorder/images/a/aa/Vladicon.png"
             },
             {
-              name: "Merlin",
+              name: "Arjuna",
               image:
-                "https://static.wikia.nocookie.net/fategrandorder/images/b/b0/MerlinStage2Icon.png"
-            },
-            {
-              name: "Taira no Kagekiyo",
-              image:
-                "https://static.wikia.nocookie.net/fategrandorder/images/2/23/S303Icon.png"
+                "https://static.wikia.nocookie.net/fategrandorder/images/0/03/Arjunaicon.png"
             }
           ],
           c: [
             {
-              name: "Mata Hari",
+              name: "Astolfo",
               image:
-                "https://static.wikia.nocookie.net/fategrandorder/images/0/0d/MataHariGoldIcon.png"
+                "https://static.wikia.nocookie.net/fategrandorder/images/c/ce/Astolfoicon.png"
             }
           ]
+        },
         }
-      },
-      all_servants: [
-        {
-          name: "Merlin (Prototype)",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/5/5e/MerlinPrototypeArcadeIcon.png"
-        },
-        {
-          name: "Artoria Pendragon",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/e/ed/ArtoriaPendragonIcon.png"
-        },
-        {
-          name: "Merlin",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/b/b0/MerlinStage2Icon.png"
-        },
-
-        {
-          name: "Sima Yi (Reines)",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/b/b6/S241Icon.png"
-        },
-        {
-          name: "Arjuna (Alter)",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/c/c6/S247Icon.png"
-        },
-        {
-          name: "Mashu Kyrielight",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/3/30/MashuIconSR.png"
-        },
-        {
-          name: "Taira no Kagekiyo",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/2/23/S303Icon.png"
-        },
-        {
-          name: "B B",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/e/e8/BBicon.png"
-        },
-        {
-          name: "Okita Sōji (Alter)",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/e/e7/Icon_S209.png"
-        },
-        {
-          name: "Caren C Hortensia (Amor Caren)",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/7/72/S305Icon.png"
-        },
-        {
-          name: "Mata Hari",
-          image:
-            "https://static.wikia.nocookie.net/fategrandorder/images/0/0d/MataHariGoldIcon.png"
-        }
-      ]
-    };
+      }
+    }
   }
 };
 </script>
