@@ -121,7 +121,7 @@ router.get("/detailServant/filter", async function (req, res, next) {
     var re = convert.replace("[", "(");
     var re2 = re.replace("]", ")");
 
-    const sql0 = "SELECT s.name, s.id, s.atk, s.stats, i.saint_graphs FROM servant AS s RIGHT JOIN images AS i ON (s.id = i.servant_id) join class AS c on (c.class_id = s.class_id)  WHERE i.stage = ? and c.class_name in "
+    const sql0 = "SELECT s.name, s.id, s.atk, s.stats, i.saint_graphs FROM servant AS s JOIN images AS i ON (s.id = i.servant_id) join class AS c on (c.class_id = s.class_id)  WHERE i.stage = ? and c.class_name in "
     // console.log(sql0 + re2)
 
     const [rows, fields] = await pool.query(sql0 + re2, [1]);

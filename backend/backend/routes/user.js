@@ -50,7 +50,7 @@ router.post('/user/signup', async (req, res, next) => {
         await registerSchema.validateAsync(req.body, { abortEarly: false })
 
     } catch (err) {
-        return res.status(400).json(err)
+        return res.status(400).send(err)
     }
 
     const conn = await pool.getConnection()
@@ -103,7 +103,7 @@ router.post('/user/login', async (req, res, next) => {
 
         if (rows.length === 1 && matched) {
             // console.log("Have Email && Password match")
-            return res.json({ state: true,
+            return res.status(200).json({ state: true,
                             message: "Login success",
                               reason: "Have Email && Password match",
                               userData: rows[0]
@@ -111,7 +111,7 @@ router.post('/user/login', async (req, res, next) => {
         }
         else if (rows.length === 1){
             // console.log("Password incorrect")
-            return res.json({ state: false,
+            return res.status(400).json({ state: false,
                               reason: "Password incorrect",
                             });
         }
@@ -122,7 +122,7 @@ router.post('/user/login', async (req, res, next) => {
         await conn.rollback();
         console.log(err)
         return res.status(500).json({ state: false,
-                                      error: "Email not found!"
+                                      reason: "Email not found!"
                                     })
     }finally{
         conn.release()

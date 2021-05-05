@@ -232,7 +232,7 @@ export default {
           })
           .catch(err => {
             console.log(err);
-            alert(err.response.data.details[0].message);
+            alert(err.response.data.reason);
           });
       }
     },
@@ -256,17 +256,18 @@ export default {
           .post("/user/signup", data)
           .then(res => {
             alert(res.data);
-            this.username = "";
-            this.register_password = "";
-            this.register_email = "";
-            this.$v.username.$error = false;
-            this.$v.register_password.$error = false;
-            this.$v.register_email.$error = false;
-            console.log(this.$v.username.$error);
+            location.reload();
+            // this.username = "";
+            // this.register_password = "";
+            // this.register_email = "";
+            // this.$v.username.$error = false;
+            // this.$v.register_password.$error = false;
+            // this.$v.register_email.$error = false;
+            // console.log(this.$v.username.$error);
           })
           .catch(err => {
             console.log(err);
-            alert(err.response.data.details[0].message);
+            alert(err.response.data.details.message);
           });
       }
     }
