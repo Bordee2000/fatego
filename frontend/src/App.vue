@@ -9,9 +9,9 @@
       v-if="$route.fullPath!='/login'"
     >
       <div class="navbar-brand">
-        <router-link to="/" class="navbar-item is-size-5 has-text-weight-bold">ServantList</router-link>
-        <router-link to="/calculator" class="navbar-item is-size-5 has-text-weight-bold">Calculation</router-link>
-        <router-link to="/team" class="navbar-item is-size-5 has-text-weight-bold">Team Recommend</router-link>
+        <router-link to="/" class="navbar-item is-size-5 has-text-weight-bold" :class="$route.fullPath=='/'?'has-text-danger':'is-dark'">ServantList</router-link>
+        <router-link to="/calculator" class="navbar-item is-size-5 has-text-weight-bold" :class="$route.fullPath=='/calculator'?'has-text-danger':'is-dark'">Calculation</router-link>
+        <router-link to="/team" class="navbar-item is-size-5 has-text-weight-bold" :class="$route.fullPath=='/team'?'has-text-danger':'is-dark'" >Team Recommend</router-link>
       </div>
       <div class="navbar-brand" style="margin: auto 43%;position: absolute;">
         <router-link to="/" class="is-size-3 has-text-weight-bold">FateGOBase</router-link>
