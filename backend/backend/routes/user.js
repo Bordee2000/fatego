@@ -92,8 +92,6 @@ const loginSchema = Joi.object({
   })
 
 router.post('/user/login', async (req, res, next) => {
-    // console.log(req);
-    // console.log(password);
     try {
             await loginSchema.validateAsync(req.body, { abortEarly: false })
     } catch (err) {
@@ -109,13 +107,9 @@ router.post('/user/login', async (req, res, next) => {
     try{
         const sqlUser = 'SELECT * FROM users WHERE email = ?'
         const [rows, cols] = await conn.query(sqlUser, [email])
-        // console.log(rows);
         matched = await verifyPassword(password, rows[0].password);
-        // console.log("Ckeck = " + matched);
 
         if (rows.length === 1 && matched) {
-
-
             // Check if token already existed
             const [tokens] = await conn.query('SELECT * FROM tokens WHERE user_id=?', [rows[0].id])
 
@@ -136,14 +130,12 @@ router.post('/user/login', async (req, res, next) => {
                                         });
         }
         else if (rows.length === 1){
-            // console.log("Password incorrect")
             return res.status(400).json({ state: false,
                               reason: "Password incorrect",
                             });
         }
 
         await conn.commit()
-        // return res.json(rows)
     }catch(err){
         await conn.rollback();
         console.log(err)

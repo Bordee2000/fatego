@@ -197,13 +197,13 @@
               <div class="column">
                 <label class="label">Attack</label>
                 <div class="control">
-                  <input v-model="data.atk" class="input" type="number" placeholder="9999 " />
+                  <input v-model="data.atk" class="input" type="number" placeholder="Less than 10,000,000 " />
                 </div>
               </div>
               <div class="column">
                 <label class="label">HP</label>
                 <div class="control">
-                  <input v-model="data.hp" class="input" type="number" placeholder="9999 " />
+                  <input v-model="data.hp" class="input" type="number" placeholder="Less than 10,000,000" />
                 </div>
               </div>
             </div>
@@ -215,7 +215,7 @@
                     v-model="data.attribute"
                     class="input"
                     type="text"
-                    placeholder="Sky,Earth,Man,Star,etc."
+                    placeholder="Ex. Sky, Earth, Man, Star, etc."
                   />
                 </div>
               </div>
@@ -226,7 +226,7 @@
                     v-model="data.growth_curve"
                     class="input"
                     type="text"
-                    placeholder="Semi Reverse S"
+                    placeholder="Ex. Semi Reverse S, etc."
                   />
                 </div>
               </div>
@@ -239,7 +239,7 @@
                     v-model="data.star_absorption"
                     class="input"
                     type="number"
-                    placeholder="9.99%"
+                    placeholder="Less than 100%"
                   />
                 </div>
               </div>
@@ -250,7 +250,7 @@
                     v-model="data.star_generation"
                     class="input"
                     type="number"
-                    placeholder="9.99%"
+                    placeholder="Less than 100%"
                   />
                 </div>
               </div>
@@ -263,7 +263,7 @@
                     v-model="data.np_charge_atk"
                     class="input"
                     type="number"
-                    placeholder="9.99%"
+                    placeholder="Less than 100%"
                   />
                 </div>
               </div>
@@ -274,7 +274,7 @@
                     v-model="data.np_charge_def"
                     class="input"
                     type="number"
-                    placeholder="9.99%"
+                    placeholder="Less than 100%"
                   />
                 </div>
               </div>
@@ -287,7 +287,7 @@
                     v-model="data.death_rate"
                     class="input"
                     type="number"
-                    placeholder="31.500%"
+                    placeholder="31Less than 100%"
                   />
                 </div>
               </div>
@@ -298,7 +298,7 @@
                     v-model="data.alignments"
                     class="input"
                     type="text"
-                    placeholder="Lawful・Neutral"
+                    placeholder="Ex. Lawful・Neutral, etc."
                   />
                 </div>
               </div>
@@ -311,14 +311,14 @@
                     v-model="data.gender"
                     class="input"
                     type="text"
-                    placeholder="Male,Female,etc."
+                    placeholder="Ex. Male, Female, etc."
                   />
                 </div>
               </div>
               <div class="column">
                 <label class="label">stats</label>
                 <div class="control">
-                  <input v-model="data.stats" class="input" type="number" placeholder="5" />
+                  <input v-model="data.stats" class="input" type="number" placeholder="Less than 5" />
                 </div>
               </div>
             </div>
@@ -330,14 +330,14 @@
                     v-model="data.bond_level"
                     class="input"
                     type="number"
-                    placeholder="1695000"
+                    placeholder="Less than 10,000,000"
                   />
                 </div>
               </div>
               <div class="column">
                 <label class="label">deck_card_card(Quick, Art, Burst)</label>
                 <div class="control">
-                  <input v-model="data.deck_card" class="input" type="text" placeholder="QAAAB" />
+                  <input v-model="data.deck_card" class="input" type="text" placeholder="Ex. QAAAB, QQABB, etc." />
                 </div>
               </div>
             </div>

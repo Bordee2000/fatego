@@ -34,17 +34,13 @@ router.get('/team', async function (req, res, next) {
         console.log(error)
         return res.status(400).json(error)
     }
-
 });
 
 // team recommend
 router.get("/team/recommend", function (req, res, next) {
 
     const type = req.query.type
-
     // const [row, col] = pool.query("select count(id) as num from team where deck = ?", [type]);
-
-
     const sql0 = "SELECT s.id, s.name, i.icon, st.type, t.id as team_id, t.name as team_name, t.deck FROM servant as s join servant_team as st on (s.id = st.servant_id) join team as t on (st.team_id = t.id) JOIN images AS i ON (s.id = i.servant_id) where t.deck = ? and st.type = ? and i.stage = ?"
     const promise0 = pool.query(sql0, [type, "active", 1]);
 
@@ -53,7 +49,6 @@ router.get("/team/recommend", function (req, res, next) {
 
     const sql2 = "SELECT s.id, s.name, i.icon, st.type, t.id as team_id, t.name as team_name, t.deck FROM servant as s join servant_team as st on (s.id = st.servant_id) join team as t on (st.team_id = t.id) JOIN images AS i ON (s.id = i.servant_id) where t.deck = ? and st.type = ? and i.stage = ?"
     const promise2 = pool.query(sql2, [type, "support", 1]);
-  
   
     // Use Promise.all() to make sure that all queries are successful
     Promise.all([promise0, promise1, promise2])
