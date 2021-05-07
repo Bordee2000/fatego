@@ -2,6 +2,8 @@ const express = require("express");
 const pool = require("../config");
 const Joi = require('joi')
 const bcrypt = require('bcrypt')
+const { generateToken } = require("../utils/token");
+const { isLoggedIn } = require('../middlewares')
 
 router = express.Router();
 
@@ -50,7 +52,7 @@ router.post('/user/signup', async (req, res, next) => {
         await registerSchema.validateAsync(req.body, { abortEarly: false })
 
     } catch (err) {
-        return res.status(400).json(err)
+        return res.status(400).send(err)
     }
 
     const conn = await pool.getConnection()
@@ -82,52 +84,82 @@ async function verifyPassword(password, hash) {
     // using the bcrypt compare method,
     // and return a boolean result accordingly.
     return await bcrypt.compare(password, hash);
-  }
+}
+
+const loginSchema = Joi.object({
+    email: Joi.string().required(),
+    password: Joi.string().required()
+})
 
 router.post('/user/login', async (req, res, next) => {
-    email = req.body.email
-    password = req.body.password
-    console.log(req);
-    console.log(password);
+    // console.log(req);
+    // console.log(password);
+    try {
+        await loginSchema.validateAsync(req.body, { abortEarly: false })
+    } catch (err) {
+        return res.status(400).send(err)
+    }
+
+    const email = req.body.email
+    const password = req.body.password
 
     const conn = await pool.getConnection()
     await conn.beginTransaction();
 
-    try{
+    try {
         const sqlUser = 'SELECT * FROM users WHERE email = ?'
         const [rows, cols] = await conn.query(sqlUser, [email])
-        // encapPassword = await bcrypt.hash(password, 10)
-        console.log(rows);
+        // console.log(rows);
         matched = await verifyPassword(password, rows[0].password);
-        console.log("Ckeck = " + matched);
+        // console.log("Ckeck = " + matched);
 
         if (rows.length === 1 && matched) {
-            // console.log("Have Email && Password match")
-            return res.json({ state: true,
-                            message: "Login success",
-                              reason: "Have Email && Password match",
-                              userData: rows[0]
-                            });
+
+
+            // Check if token already existed
+            const [tokens] = await conn.query('SELECT * FROM tokens WHERE user_id=?', [rows[0].id])
+
+            let token = tokens[0]?.token
+            if (!token) {
+                // Generate and save token into database
+                token = generateToken()
+                await conn.query(
+                    'INSERT INTO tokens(user_id, token) VALUES (?, ?)',
+                    [rows[0].id, token]
+                )
+            }
+            return res.status(200).json({
+                state: true,
+                message: "Login success",
+                reason: "Have Email && Password match",
+                userData: rows[0],
+                'token': token
+            });
         }
-        else if (rows.length === 1){
+        else if (rows.length === 1) {
             // console.log("Password incorrect")
-            return res.json({ state: false,
-                              reason: "Password incorrect",
-                            });
+            return res.status(400).json({
+                state: false,
+                reason: "Password incorrect",
+            });
         }
 
         await conn.commit()
         // return res.json(rows)
-    }catch(err){
+    } catch (err) {
         await conn.rollback();
         console.log(err)
-        return res.status(500).json({ state: false,
-                                      error: "Email not found!"
-                                    })
-    }finally{
+        return res.status(500).json({
+            state: false,
+            reason: "Email not found!"
+        })
+    } finally {
         conn.release()
     }
+})
 
+router.get('/user/me', isLoggedIn, async (req, res, next) => {
+    res.json(req.user)
 })
 
 

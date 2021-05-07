@@ -1,5 +1,5 @@
 <template>
-  <div class="container is-fluid mt-6">
+  <div class="container is-fluid mt-5">
     <div class="columns is-centered">
       <h1 class="is-size-1 title px-6">Team Recommend</h1>
     </div>
@@ -123,7 +123,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from "@/plugins/axios";
 export default {
   data() {
     return {
@@ -228,7 +228,7 @@ export default {
     getTeams(value) {
       this.team_type = value;
       axios
-        .get("http://localhost:3000/team", {
+        .get("/team", {
           params: {
             type: this.team_type
           }

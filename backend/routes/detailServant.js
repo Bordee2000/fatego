@@ -111,6 +111,122 @@ router.post(
   }
 );
 
+router.post(
+  "/detailServant/add", async function (req, res, next) {
+    console.log(req);
+      const uri = req.body.image;
+      let uriArray = [];
+      if (!uri) {
+        return res.status(400).json({ message: "Please upload a URL image" });
+      }
+
+      const name = req.body.name;
+      const atk = req.body.atk;
+      const hp = req.body.hp;
+      const attribute = req.body.attribute;
+      const growth_curve = req.body.growth_curve;
+      const star_absorption = req.body.star_absorption;
+      const star_generation = req.body.star_generation;
+      const np_charge_atk = req.body.np_charge_atk;
+      const np_charge_def = req.body.np_charge_def;
+      const death_rate = req.body.death_rate;
+      const alignments = req.body.alignments;
+      const gender = req.body.gender;
+      const stats = req.body.stats;
+      const bond_level = req.body.bond_level;
+      const deck_card = req.body.deck_card;
+
+      const class_name = req.body.class_name;
+
+      const conn = await pool.getConnection();
+      // Begin transaction
+      await conn.beginTransaction();
+
+      try {
+        let [rows, cols] = await conn.query('SELECT class_id FROM class WHERE class_name = ?', [class_name]);
+        var class_id = rows[0].class_id
+        console.log(class_id);
+
+
+        let results = await conn.query(
+          "insert into SERVANT(`name`, atk, hp, attribute, growth_curve, star_absorption, star_generation, np_charge_atk, np_charge_def, death_rate, alignments, gender, stats, bond_level, deck_card, class_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+          [name, atk, hp, attribute, growth_curve, star_absorption, star_generation, np_charge_atk, np_charge_def, death_rate, alignments, gender, stats, bond_level, deck_card, class_id]
+        );
+
+        const servantId = results[0].insertId
+
+        req.body.image.forEach((uri, index) => {
+          let url = [index+1, uri, servantId, index+1];
+          uriArray.push(url);
+        });
+
+        await conn.query(
+          "INSERT INTO images(stage, saint_graphs, servant_id, illustrator_id) VALUES ?;",
+          [uriArray]
+        );
+
+        await conn.commit();
+        res.send("Insert success!");
+      } catch (err) {
+        console.log(err);
+        await conn.rollback();
+        return res.status(400).send(err);
+      } finally {
+        console.log("finally");
+        conn.release();
+      }
+  }
+);
+
+// Update servantDetail
+router.put('/detailServant/update/:id', async function (req, res, next) {
+  console.log(req.body);
+  try {
+    const name = req.body.name;
+    const atk = req.body.atk;
+    const hp = req.body.hp;
+    const attribute = req.body.attribute;
+    const growth_curve = req.body.growth_curve;
+    const star_absorption = req.body.star_absorption;
+    const star_generation = req.body.star_generation;
+    const np_charge_atk = req.body.np_charge_atk;
+    const np_charge_def = req.body.np_charge_def;
+    const death_rate = req.body.death_rate;
+    const alignments = req.body.alignments;
+    const gender = req.body.gender;
+    const stats = req.body.stats;
+    const bond_level = req.body.bond_level;
+    const deck_card = req.body.deck_card;
+
+      const [rows1, fields1] = await pool.query(
+          'UPDATE servant SET name = ?, atk = ?, hp = ?, attribute = ?, growth_curve = ?, star_absorption = ?, star_generation = ?, np_charge_atk = ?, np_charge_def = ?, death_rate = ?, alignments = ?, gender = ?, stats = ?, bond_level = ?, deck_card = ? WHERE id=?', 
+          [name, atk, hp, attribute, growth_curve, star_absorption, star_generation, np_charge_atk, np_charge_def, death_rate, alignments, gender, stats, bond_level, deck_card, req.params.id]
+      )
+
+      // console.log(rows1)
+      
+      res.json({ message: "Update Success!",
+      name: name,
+      atk: atk,
+      hp: hp,
+      attribute: attribute,
+      growth_curve: growth_curve,
+      star_absorption: star_absorption,
+      star_generation: star_generation,
+      np_charge_atk: np_charge_atk,
+      np_charge_def: np_charge_def,
+      death_rate: death_rate,
+      alignments: alignments,
+      gender: gender,
+      stats: stats,
+      bond_level: bond_level,
+      deck_card: deck_card
+    })
+  } catch (error) {
+      res.status(500).json(error)
+  }
+});
+
 //filter Path
 router.get("/detailServant/filter", async function (req, res, next) {
   try {
@@ -259,6 +375,78 @@ router.get("/detailServant/class/:id", async function (req, res, next) {
   }
 })
 
+// delete servant and image
+router.delete("/detailServant/delete/:id", async function (req, res, next) {
+  // Your code here
+  const conn = await pool.getConnection();
+  await conn.beginTransaction();
+
+  try {
+    console.log(req.params.id)
+    const id = parseInt(req.params.id)
+    // Delete images
+    await conn.query("DELETE FROM servant_skills WHERE servant_id = ?", [id]);
+    await conn.query("DELETE FROM servant_ascension WHERE servant_id = ?", [id]);
+    await conn.query("DELETE FROM servant_voce_actor WHERE servant_id = ?", [id]);
+    await conn.query("DELETE FROM biography WHERE servant_id = ?", [id]);
+    await conn.query("DELETE FROM dialogue WHERE servant_id = ?", [id]);
+    await conn.query("DELETE FROM servant_traits WHERE servant_id = ?", [id]);
+    await conn.query("DELETE FROM servant_team WHERE servant_id = ?", [id]);
+    await conn.query("DELETE FROM images WHERE servant_id = ?", [
+      id,
+    ]);
+    // Delete the selected blog
+    const [ rows2, fields2] = await conn.query("DELETE FROM servant WHERE id = ?;", [
+      id,
+    ]);
+
+    if (rows2.affectedRows === 1) {
+      await conn.commit();
+      res.status(204).json({message: "delete sucess"});
+    } else {
+      throw "Cannot delete the selected servant";
+    }
+  } catch (err) {
+    console.log(err)
+    await conn.rollback();
+    return res.status(500).json(err);
+  } finally {
+    conn.release();
+  }
+});
+
+
+// Update servantDetail
+router.put('/detailServant/update/:id', async function (req, res, next) {
+  try {
+    const name = req.body.name;
+    const atk = req.body.atk;
+    const hp = req.body.hp;
+    const attribute = req.body.attribute;
+    const growth_curve = req.body.growth_curve;
+    const star_absorption = req.body.star_absorption;
+    const star_generation = req.body.star_generation;
+    const np_charge_atk = req.body.np_charge_atk;
+    const np_charge_def = req.body.np_charge_def;
+    const death_rate = req.body.death_rate;
+    const alignments = req.body.alignments;
+    const gender = req.body.gender;
+    const stats = req.body.stats;
+    const bond_level = req.body.bond_level;
+    const deck_card = req.body.deck_card;
+
+
+      const [rows1, fields1] = await pool.query(
+          'UPDATE servant SET name = ?, atk = ?, hp = ?, attribute = ?, growth_curve = ?, star_absorption = ?, star_generation = ?, np_charge_atk = ?, np_charge_def = ?, death_rate = ?, alignments = ?, gender = ?, stats = ?, bond_level = ?, deck_card = ? WHERE id=?', 
+          [name, atk, hp, attribute, growth_curve, star_absorption, star_generation, np_charge_atk, np_charge_def, death_rate, alignments, gender, stats, bond_level, deck_card, req.params.id]
+      )
+
+      console.log(rows1)
+      res.json({ name: req.body.comment })
+  } catch (error) {
+      res.status(500).json(error)
+  }
+});
 // router.put("/blogs/:id", upload.array("myImage", 5), async function (req, res, next) {
 //   // Your code here
 //   const file = req.files;

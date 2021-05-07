@@ -37,7 +37,7 @@
               v-model="$v.login_password.$model"
               :class="{'is-danger': $v.login_password.$error}"
               class="input"
-              type="text"
+              type="password"
             />
             <span class="icon is-small is-left">
               <i class="fas fa-lock"></i>
@@ -72,7 +72,7 @@
 
         <!-- username register -->
         <div class="mb-5">
-          <label class="is-size-5" for>Username</label>
+          <label class="label">Username</label>
           <div class="control">
             <input
               v-model="$v.username.$model"
@@ -117,7 +117,7 @@
               v-model="$v.register_password.$model"
               :class="{'is-danger': $v.register_password.$error}"
               class="input"
-              type="text"
+              type="password"
             />
             <span class="icon is-small is-left">
               <i class="fas fa-lock"></i>
@@ -228,11 +228,14 @@ export default {
           .post("/user/login", data)
           .then(res => {
             alert(res.data.message);
+            const token = res.data.token;
+            localStorage.setItem("token", token);
+            this.$emit("auth-change");
             this.$router.push({ path: "/" });
           })
           .catch(err => {
             console.log(err);
-            alert(err.response.data.details[0].message);
+            alert(err.response.data.reason);
           });
       }
     },
@@ -256,17 +259,10 @@ export default {
           .post("/user/signup", data)
           .then(res => {
             alert(res.data);
-            this.username = "";
-            this.register_password = "";
-            this.register_email = "";
-            this.$v.username.$error = false;
-            this.$v.register_password.$error = false;
-            this.$v.register_email.$error = false;
-            console.log(this.$v.username.$error);
+            location.reload();
           })
           .catch(err => {
-            console.log(err);
-            alert(err.response.data.details[0].message);
+            alert(err.response.data.details.message);
           });
       }
     }

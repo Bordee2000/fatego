@@ -4,7 +4,7 @@ const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
   password: 'Bordee20',
-  database: 'new_schema',
+  database: 'fatego',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0

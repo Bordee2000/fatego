@@ -6,7 +6,7 @@ router = express.Router();
 router.get("/", async function (req, res, next) {
   try {
     const search = req.query.search || ''
-    let sql = 'SELECT s.name, s.id, s.stats, i.saint_graphs FROM servant AS s RIGHT JOIN images AS i ON (s.id = i.servant_id) WHERE i.stage = ?'
+    let sql = 'SELECT s.name, s.id, s.stats, s.hp, s.atk, c.class_name, i.saint_graphs FROM servant AS s RIGHT JOIN images AS i ON (s.id = i.servant_id) join class as c on (c.class_id = s.class_id) WHERE i.stage = ?'
     let val = [1]
 
     if (search.length > 0) {

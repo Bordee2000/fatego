@@ -18,7 +18,20 @@
       </div>
 
       <div class="navbar-end">
-        <div class="navbar-item">
+          <div v-if="user" class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              <figure class="image is-24x24 my-auto">
+                <img class="is-rounded" src="https://bulma.io/images/placeholders/128x128.png" />
+              </figure>
+              <span class="pl-3">{{ user.username }}</span>
+            </a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" @click="logout()">Log out</a>
+            </div>
+          </div>
+
+
+        <div v-if="!user" class="navbar-item">
           <div class="buttons">
             <router-link to="/login" class="button is-primary">
               <strong>Log in</strong>
@@ -28,6 +41,42 @@
       </div>
     </nav>
 
-    <router-view :key="$route.fullPath" />
+    <router-view :key="$route.fullPath" @auth-change="onAuthChange" :user="user"/>
   </div>
 </template>
+
+<script>
+import axios from '@/plugins/axios'
+
+export default {
+  data() {
+    return {
+      user: ""
+    };
+  },
+  mounted() {
+    this.onAuthChange();
+  },
+  methods: {
+    onAuthChange() {
+      const token = localStorage.getItem("token");
+      if (token) {
+        this.getUser();
+      }
+    },
+    getUser() {
+      const token = localStorage.getItem("token");
+      axios
+        .get("/user/me")
+        .then(res => {
+          this.user = res.data;
+        });
+    },
+    logout(){
+      localStorage.removeItem('token');
+      location.reload();
+    }
+  }
+};
+</script>
+
