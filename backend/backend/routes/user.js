@@ -2,6 +2,8 @@ const express = require("express");
 const pool = require("../config");
 const Joi = require('joi')
 const bcrypt = require('bcrypt')
+const { generateToken } = require("../utils/token");
+const { isLoggedIn } = require('../middlewares')
 
 router = express.Router();
 
@@ -62,9 +64,9 @@ router.post('/user/signup', async (req, res, next) => {
 
     try {
         await conn.query(
-            'INSERT INTO users(username, password, email) ' +
-            'VALUES (?, ?, ?)',
-            [username, password, email,]
+            'INSERT INTO users(username, password, email, role) ' +
+            'VALUES (?, ?, ?, ?)',
+            [username, password, email, "user"]
         )
         conn.commit()
         res.status(201).send("Register Success")
@@ -84,11 +86,22 @@ async function verifyPassword(password, hash) {
     return await bcrypt.compare(password, hash);
   }
 
+const loginSchema = Joi.object({
+    email: Joi.string().required(),
+    password: Joi.string().required()
+  })
+
 router.post('/user/login', async (req, res, next) => {
-    email = req.body.email
-    password = req.body.password
-    console.log(req);
-    console.log(password);
+    // console.log(req);
+    // console.log(password);
+    try {
+            await loginSchema.validateAsync(req.body, { abortEarly: false })
+    } catch (err) {
+            return res.status(400).send(err)
+    }
+
+    const email = req.body.email
+    const password = req.body.password
 
     const conn = await pool.getConnection()
     await conn.beginTransaction();
@@ -96,18 +109,31 @@ router.post('/user/login', async (req, res, next) => {
     try{
         const sqlUser = 'SELECT * FROM users WHERE email = ?'
         const [rows, cols] = await conn.query(sqlUser, [email])
-        // encapPassword = await bcrypt.hash(password, 10)
-        console.log(rows);
+        // console.log(rows);
         matched = await verifyPassword(password, rows[0].password);
-        console.log("Ckeck = " + matched);
+        // console.log("Ckeck = " + matched);
 
         if (rows.length === 1 && matched) {
-            // console.log("Have Email && Password match")
+
+
+            // Check if token already existed
+            const [tokens] = await conn.query('SELECT * FROM tokens WHERE user_id=?', [rows[0].id])
+
+            let token = tokens[0]?.token
+            if (!token) {
+                // Generate and save token into database
+                token = generateToken()
+                await conn.query(
+                    'INSERT INTO tokens(user_id, token) VALUES (?, ?)', 
+                    [rows[0].id, token]
+                )
+            }
             return res.status(200).json({ state: true,
-                            message: "Login success",
-                              reason: "Have Email && Password match",
-                              userData: rows[0]
-                            });
+                                          message: "Login success",
+                                          reason: "Have Email && Password match",
+                                          userData: rows[0],
+                                          'token': token
+                                        });
         }
         else if (rows.length === 1){
             // console.log("Password incorrect")
@@ -129,6 +155,10 @@ router.post('/user/login', async (req, res, next) => {
     }
 
 })
+
+router.get('/user/me', isLoggedIn, async (req, res, next) => {
+        res.json(req.user)
+    })
 
 
 exports.router = router

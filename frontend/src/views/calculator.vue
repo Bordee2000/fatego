@@ -13,19 +13,29 @@
               <h4 for>Class</h4>
               <div class="select" style="min-width: 100%">
                 <select required v-model="select_class" style="min-width: 100%">
-                  <option value selected disabled>Choose...</option>
+                  <option selected value="" disabled>Choose...</option>
                   <option v-for="a_class in all_class" :key="a_class" :value="a_class">{{a_class}}</option>
                 </select>
               </div>
+              <template v-if="$v.select_class.$error">
+                <p class="help is-danger" v-if="!$v.select_class.required">Class is Required</p>
+              </template>
             </div>
             <div class="column">
               <h4 for>Servant</h4>
               <div class="select" style="min-width: 100%">
                 <select v-model="select_servant" style="min-width: 100%">
                   <option value selected disabled>Select servant</option>
-                  <option v-for="servant in servants" :key="servant.name" :value="servant.name">{{servant.name}}</option>
+                  <option
+                    v-for="servant in servants"
+                    :key="servant.name"
+                    :value="servant.name"
+                  >{{servant.name}}</option>
                 </select>
               </div>
+              <template v-if="$v.select_servant.$error">
+                <p class="help is-danger" v-if="!$v.select_servant.required">Servant is Required</p>
+              </template>
             </div>
           </div>
 
@@ -311,7 +321,10 @@
 </template>
 
 <script>
-import axios from '@/plugins/axios';
+import {
+  required
+} from "vuelidate/lib/validators";
+import axios from "@/plugins/axios";
 export default {
   data() {
     return {
@@ -359,34 +372,55 @@ export default {
       ],
       NP_type: "Buster",
       servants: [],
-      select_class: '',
-      select_servant: '',
+      select_class: "",
+      select_servant: ""
     };
+  },
+  validations: {
+    select_class: {
+      required
+    },
+    select_servant: {
+      required
+    }
   },
   methods: {
     cal() {
-      if (this.data.fou) {
-        this.data.atk += 1000;
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        this.total = 0;
+        this.data.np = 300;
+        if (this.data.fou) {
+          this.data.atk += 1000;
+        }
+
+        if (this.data.goldFou) {
+          this.data.atk += 1000;
+        }
+        this.data.np += 100 + 25 * parseInt(this.data.npLevel);
+        this.total =
+          this.data.atk *
+            (this.data.np / 100) *
+            this.cardDmg(this.NP_type) *
+            this.data.advantage *
+            this.classDmg(this.select_class) *
+            0.23 *
+            (1 + this.data.attackBuffs / 100 + this.data.defenseDebuffs / 100) *
+            (1 + this.data.cardBuffs / 100 + this.data.cardDebuffs / 100) *
+            (1 + this.data.NPBuffs / 100 + this.data.SPBuffs / 100) *
+            (1 + this.data.NPSPBuffs / 100) *
+            this.data.ESAdvantage +
+          this.data.flatAttack;
+
+        this.low = Math.round(
+          0.9 * (this.total - this.data.flatAttack) + this.data.flatAttack
+        );
+        this.avg = Math.round(this.total);
+        this.high = Math.round(
+          1.099 * (this.total - this.data.flatAttack) + this.data.flatAttack
+        );
       }
-
-      if (this.data.goldFou) {
-        this.data.atk += 1000;
-      }
-      this.data.np += (100+(25*parseInt(this.data.npLevel)));
-      this.total =
-        this.data.atk * (this.data.np/100) *
-        this.cardDmg(this.NP_type) * this.data.advantage *
-        this.classDmg(this.select_class) * 0.23 *
-        (1 + (this.data.attackBuffs/100) + (this.data.defenseDebuffs/100)) *
-        (1 + (this.data.cardBuffs/100) + (this.data.cardDebuffs/100)) *
-        (1 + (this.data.NPBuffs/100) + (this.data.SPBuffs/100)) *
-        (1 + (this.data.NPSPBuffs/100)) * this.data.ESAdvantage + this.data.flatAttack;
-
-      console.log(this.total);
-      this.low = Math.round(0.9 * (this.total-this.data.flatAttack) + this.data.flatAttack)
-      this.avg = Math.round(this.total)
-      this.high = Math.round(1.099 * (this.total-this.data.flatAttack) + this.data.flatAttack)
-
+      this.scrollToTop();
     },
     classDmg(e) {
       var classVal = 1;
@@ -416,8 +450,8 @@ export default {
       }
     },
     reset() {
-      this.select_class= '';
-      this.select_servant='';
+      this.select_class = "";
+      this.select_servant = "";
       this.data.atk = 0;
       this.data.np = 300;
       this.NP_type = "Buster";
@@ -444,33 +478,40 @@ export default {
       this.avg = 0;
       this.high = 0;
     },
-    getServant(){
+    getServant() {
       axios
-      .get("/detailServant/filter", {
-        params: {
-          class: [this.select_class]
-        }
-      })
-      .then((res) => {
-        this.servants = res.data;
-        console.log(res.data);
-      }).catch((err) => {
-        console.log(err);
-      });
+        .get("/detailServant/filter", {
+          params: {
+            class: [this.select_class]
+          }
+        })
+        .then(res => {
+          this.servants = res.data;
+          console.log(res.data);
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
-    addAtk(){
-      this.data.atk = this.servants.filter((e)=> e.name === this.select_servant)[0].atk;     
+    addAtk() {
+      this.data.atk = this.servants.filter(
+        e => e.name === this.select_servant
+      )[0].atk;
+    },
+    scrollToTop() {
+      window.scrollTo(0, 0);
     }
   },
   watch: {
     select_class: function(newVal, oldVal) {
       if (newVal) {
-        this.getServant()
+        this.select_servant = "";
+        this.getServant();
       }
     },
     select_servant: function(newVal, oldVal) {
       if (newVal) {
-        this.addAtk()
+        this.addAtk();
       }
     }
   }
