@@ -4,7 +4,7 @@ const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
   password: 'Bordee20',
-  database: 'validation',
+  database: 'new_schema',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0

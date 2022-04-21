@@ -27,19 +27,27 @@ const usernameValidator = async (value, helpers) => {
     return value
 }
 
-const signupSchema = Joi.object({
-    email: Joi.string().required().email(),
-    mobile: Joi.string().required().pattern(/0[0-9]{9}/),
-    first_name: Joi.string().required().max(150),
-    last_name: Joi.string().required().max(150),
+async function emailValidator(value) {
+    const [rows, _] = await pool.query(
+        "SELECT username FROM users WHERE email = ?",
+        [value]
+    )
+    if (rows.length > 0) {
+        const message = 'This email is already taken'
+        throw new Joi.ValidationError(message, { message })
+    }
+    return value
+}
+
+const registerSchema = Joi.object({
+    email: Joi.string().required().email().external(emailValidator),
     password: Joi.string().required().custom(passwordValidator),
-    confirm_password: Joi.string().required().valid(Joi.ref('password')),
     username: Joi.string().required().min(5).external(usernameValidator),
 })
 
 router.post('/user/signup', async (req, res, next) => {
     try {
-        await signupSchema.validateAsync(req.body, { abortEarly: false })
+        await registerSchema.validateAsync(req.body, { abortEarly: false })
 
     } catch (err) {
         return res.status(400).json(err)
@@ -49,21 +57,17 @@ router.post('/user/signup', async (req, res, next) => {
     await conn.beginTransaction()
 
     const username = req.body.username
-    const password = await bcrypt.hash(req.body.password, 5)
-    const first_name = req.body.first_name
-    const last_name = req.body.last_name
+    const password = await bcrypt.hash(req.body.password, 10)
     const email = req.body.email
-    const mobile = req.body.mobile
 
     try {
         await conn.query(
-            'INSERT INTO users(username, password, first_name, last_name, email, mobile) ' +
-            'VALUES (?, ?, ?, ?, ?, ?)',
-            // เติมเอง
-            [username, password, first_name, last_name, email, mobile]
+            'INSERT INTO users(username, password, email) ' +
+            'VALUES (?, ?, ?)',
+            [username, password, email,]
         )
         conn.commit()
-        res.status(201).send()
+        res.status(201).send("Register Success")
     } catch (err) {
         conn.rollback()
         res.status(400).json(err.toString());
@@ -71,5 +75,60 @@ router.post('/user/signup', async (req, res, next) => {
         conn.release()
     }
 })
+
+
+async function verifyPassword(password, hash) {
+    // Verifies the input password if it matches the hash
+    // using the bcrypt compare method,
+    // and return a boolean result accordingly.
+    return await bcrypt.compare(password, hash);
+  }
+
+router.post('/user/login', async (req, res, next) => {
+    email = req.body.email
+    password = req.body.password
+    console.log(req);
+    console.log(password);
+
+    const conn = await pool.getConnection()
+    await conn.beginTransaction();
+
+    try{
+        const sqlUser = 'SELECT * FROM users WHERE email = ?'
+        const [rows, cols] = await conn.query(sqlUser, [email])
+        // encapPassword = await bcrypt.hash(password, 10)
+        console.log(rows);
+        matched = await verifyPassword(password, rows[0].password);
+        console.log("Ckeck = " + matched);
+
+        if (rows.length === 1 && matched) {
+            // console.log("Have Email && Password match")
+            return res.json({ state: true,
+                            message: "Login success",
+                              reason: "Have Email && Password match",
+                              userData: rows[0]
+                            });
+        }
+        else if (rows.length === 1){
+            // console.log("Password incorrect")
+            return res.json({ state: false,
+                              reason: "Password incorrect",
+                            });
+        }
+
+        await conn.commit()
+        // return res.json(rows)
+    }catch(err){
+        await conn.rollback();
+        console.log(err)
+        return res.status(500).json({ state: false,
+                                      error: "Email not found!"
+                                    })
+    }finally{
+        conn.release()
+    }
+
+})
+
 
 exports.router = router
